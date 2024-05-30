@@ -1,0 +1,75 @@
+[gd_scene load_steps=10 format=3 uid="uid://520xbgpf8kw3"]
+
+[ext_resource type="PackedScene" uid="uid://b0wusw0376pts" path="res://scenes/Platform.tscn" id="1_ohtn0"]
+[ext_resource type="PackedScene" uid="uid://clf42cotd1gl7" path="res://scenes/Player.tscn" id="2_0ngau"]
+[ext_resource type="PackedScene" uid="uid://c6fxthcq07sow" path="res://scenes/GrappleHookPoint.tscn" id="3_ie23a"]
+
+[sub_resource type="Gradient" id="Gradient_buo6s"]
+offsets = PackedFloat32Array(0.163934, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_h0ktl"]
+frequency = 0.0092
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mjrgc"]
+height = 256
+seamless = true
+color_ramp = SubResource("Gradient_buo6s")
+noise = SubResource("FastNoiseLite_h0ktl")
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hjux7"]
+sky_top_color = Color(0.284315, 0.529143, 0.846841, 1)
+sky_horizon_color = Color(0.693369, 0.820787, 0.951173, 1)
+sky_cover = SubResource("NoiseTexture2D_mjrgc")
+
+[sub_resource type="Sky" id="Sky_k7nvr"]
+sky_material = SubResource("ProceduralSkyMaterial_hjux7")
+
+[sub_resource type="Environment" id="Environment_wm8h4"]
+background_mode = 2
+sky = SubResource("Sky_k7nvr")
+ambient_light_color = Color(0.977937, 0.977937, 0.977937, 1)
+
+[node name="TestLevel" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_wm8h4")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.939693, -0.219846, 0.262003, 0, 0.766044, 0.642788, -0.34202, -0.604023, 0.719846, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Platforms" type="Node" parent="."]
+
+[node name="Platform" parent="Platforms" instance=ExtResource("1_ohtn0")]
+transform = Transform3D(1, 0, 0, 0, 0.992241, -0.124329, 0, 0.124329, 0.992241, 0, 0, 0)
+size = Vector3(20, 0.5, 20)
+
+[node name="Platform2" parent="Platforms" node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("1_ohtn0")]
+transform = Transform3D(0.958407, 0, 0.285404, 0, 1, 0, -0.285404, 0, 0.958407, 11.7918, 2.05829, -16.4327)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="Platform3" parent="Platforms" node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("1_ohtn0")]
+transform = Transform3D(0.989695, 0.0935523, 0.108406, -0.092996, 0.995614, -0.0101863, -0.108884, 0, 0.994054, 40.5269, -2.83003, 12.6867)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="Platform4" parent="Platforms" node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("1_ohtn0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 28.7606)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="Platform5" parent="Platforms" node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("1_ohtn0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5423, 4.91886, -16.5759)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="Player" parent="." instance=ExtResource("2_0ngau")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.23785, 0.803025, 3.63084)
+
+[node name="GrappleHookPoint" parent="." instance=ExtResource("3_ie23a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5087, 7.51711, 12.2552)

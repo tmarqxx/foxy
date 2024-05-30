@@ -1,0 +1,96 @@
+[gd_scene load_steps=14 format=3 uid="uid://bvdulrl78mpn6"]
+
+[ext_resource type="PackedScene" uid="uid://c6fxthcq07sow" path="res://scenes/GrappleHookPoint.tscn" id="1_go8yj"]
+[ext_resource type="PackedScene" uid="uid://b0wusw0376pts" path="res://scenes/Platform.tscn" id="2_wrcl6"]
+[ext_resource type="PackedScene" uid="uid://clf42cotd1gl7" path="res://scenes/Player.tscn" id="3_ljgbj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_817sb"]
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3uuqe"]
+albedo_color = Color(0, 1, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_htwic"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_26xmq"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Gradient" id="Gradient_7ercw"]
+offsets = PackedFloat32Array(0.163934, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_4fw1w"]
+frequency = 0.0092
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_skd56"]
+height = 256
+seamless = true
+color_ramp = SubResource("Gradient_7ercw")
+noise = SubResource("FastNoiseLite_4fw1w")
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_byujo"]
+sky_top_color = Color(0.284315, 0.529143, 0.846841, 1)
+sky_horizon_color = Color(0.693369, 0.820787, 0.951173, 1)
+sky_cover = SubResource("NoiseTexture2D_skd56")
+
+[sub_resource type="Sky" id="Sky_ahvrm"]
+sky_material = SubResource("ProceduralSkyMaterial_byujo")
+
+[sub_resource type="Environment" id="Environment_37mm3"]
+background_mode = 2
+sky = SubResource("Sky_ahvrm")
+ambient_light_color = Color(0.977937, 0.977937, 0.977937, 1)
+
+[node name="SwingingTestLevel" type="Node3D"]
+
+[node name="GrappleHookPoint" parent="." instance=ExtResource("1_go8yj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 0)
+
+[node name="Platform" parent="." instance=ExtResource("2_wrcl6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, 18)
+size = Vector3(20, 0.5, 20)
+
+[node name="MeshInstance3D" parent="Platform" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_817sb")
+
+[node name="Platform2" parent="." node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("2_wrcl6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, 18)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="MeshInstance3D" parent="Platform2" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_3uuqe")
+
+[node name="Platform3" parent="." node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("2_wrcl6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0, -19)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="MeshInstance3D" parent="Platform3" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_htwic")
+
+[node name="Platform4" parent="." node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("2_wrcl6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, -18)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="MeshInstance3D" parent="Platform4" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_26xmq")
+
+[node name="Player" parent="." instance=ExtResource("3_ljgbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2, -17)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_37mm3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.939693, -0.219846, 0.262003, 0, 0.766044, 0.642788, -0.34202, -0.604023, 0.719846, 0, 0, 0)
+shadow_enabled = true
+
+[editable path="Platform"]
+[editable path="Platform2"]
+[editable path="Platform3"]
+[editable path="Platform4"]

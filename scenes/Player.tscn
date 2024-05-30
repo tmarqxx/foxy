@@ -1,0 +1,87 @@
+[gd_scene load_steps=15 format=3 uid="uid://clf42cotd1gl7"]
+
+[ext_resource type="Script" path="res://scripts/player/Player.gd" id="1_b7y6r"]
+[ext_resource type="Script" path="res://scripts/player/states/IdleState.gd" id="3_1f0m1"]
+[ext_resource type="Script" path="res://scripts/StateMachine.gd" id="4_ahg3t"]
+[ext_resource type="Script" path="res://scripts/player/states/WalkState.gd" id="4_kw0no"]
+[ext_resource type="Script" path="res://scripts/player/states/SprintState.gd" id="5_fgvml"]
+[ext_resource type="Script" path="res://scripts/player/states/GrappleSwingState.gd" id="6_glrl8"]
+[ext_resource type="Script" path="res://scripts/player/states/AirborneState.gd" id="6_vdthi"]
+[ext_resource type="PackedScene" uid="uid://c5k4lj0apt517" path="res://scenes/BoomCamera3D.tscn" id="7_0nxla"]
+[ext_resource type="PackedScene" uid="uid://pse67xrkho65" path="res://scenes/GrapplingHook.tscn" id="8_2f53p"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gwthl"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ipvyw"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_5t44h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5rniw"]
+albedo_color = Color(0.0383972, 0.0383972, 0.0383972, 1)
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_fjcwa"]
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("state_machine", "mesh_root", "camera")]
+script = ExtResource("1_b7y6r")
+state_machine = NodePath("StateMachine")
+mesh_root = NodePath("MeshRig")
+camera = NodePath("BoomCamera3D")
+movement_speed = 10.0
+jump_peak_height = 2.5
+jump_distance_to_peak = 4.0
+jump_distance_to_floor = 3.0
+
+[node name="StandingCollision" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_gwthl")
+
+[node name="RayCast3D" type="RayCast3D" parent="StandingCollision"]
+target_position = Vector3(0, 1, 0)
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("4_ahg3t")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_1f0m1")
+
+[node name="Walk" type="Node" parent="StateMachine"]
+script = ExtResource("4_kw0no")
+
+[node name="Sprint" type="Node" parent="StateMachine"]
+script = ExtResource("5_fgvml")
+
+[node name="Airborne" type="Node" parent="StateMachine" node_paths=PackedStringArray("grappling_hook")]
+script = ExtResource("6_vdthi")
+grappling_hook = NodePath("../../GrapplingHook")
+
+[node name="GrappleSwing" type="Node" parent="StateMachine" node_paths=PackedStringArray("grappling_hook")]
+script = ExtResource("6_glrl8")
+grappling_hook = NodePath("../../GrapplingHook")
+
+[node name="MeshRig" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="MeshRig"]
+mesh = SubResource("CapsuleMesh_ipvyw")
+
+[node name="Glasses" type="MeshInstance3D" parent="MeshRig"]
+transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.440662, 0.305765)
+mesh = SubResource("BoxMesh_5t44h")
+surface_material_override/0 = SubResource("StandardMaterial3D_5rniw")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+active = false
+tree_root = SubResource("AnimationNodeStateMachine_fjcwa")
+anim_player = NodePath("../AnimationPlayer")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="BoomCamera3D" parent="." node_paths=PackedStringArray("subject") instance=ExtResource("7_0nxla")]
+subject = NodePath("..")
+camera_offset = Vector3(0, 1.5, 0)
+default_pitch = 10.0
+
+[node name="GrapplingHook" parent="." node_paths=PackedStringArray("player") instance=ExtResource("8_2f53p")]
+player = NodePath("..")
+
+[connection signal="set_camera_rotation" from="BoomCamera3D" to="." method="_on_set_camera_rotation"]
+[connection signal="hook_engaged" from="GrapplingHook" to="StateMachine/Airborne" method="_handle_hook_engaged"]

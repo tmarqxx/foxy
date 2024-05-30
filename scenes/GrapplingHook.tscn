@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://pse67xrkho65"]
+
+[ext_resource type="Script" path="res://scripts/GrapplingHook.gd" id="1_xut6r"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_jjnpj"]
+
+[node name="GrapplingHook" type="Node3D"]
+script = ExtResource("1_xut6r")
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.25
+one_shot = true
+
+[node name="ShapeCast3D" type="ShapeCast3D" parent="."]
+shape = SubResource("SphereShape3D_jjnpj")
+target_position = Vector3(0, 0, 0)
+collision_mask = 2
+collide_with_areas = true
+collide_with_bodies = false
+
+[connection signal="timeout" from="Timer" to="." method="_engage_hook"]

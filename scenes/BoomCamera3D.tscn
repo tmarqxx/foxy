@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5k4lj0apt517"]
+
+[ext_resource type="Script" path="res://scripts/BoomCamera3D.gd" id="1_3bcrw"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_bugco"]
+
+[node name="BoomCamera3D" type="Node3D"]
+script = ExtResource("1_3bcrw")
+metadata/_access_modifiers = {
+"camera_node": 2,
+"pitch_pivot": 2,
+"roll_pivot": 2
+}
+
+[node name="YawPivot" type="Node3D" parent="."]
+metadata/_access_modifiers = {
+"camera_node": 2,
+"pitch_node": 2,
+"pitch_pivot": 2,
+"roll_pivot": 2
+}
+
+[node name="PitchPivot" type="Node3D" parent="YawPivot"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="YawPivot/PitchPivot"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
+shape = SubResource("SphereShape3D_bugco")
+spring_length = 4.0
+margin = 0.2
+
+[node name="Camera3D" type="Camera3D" parent="YawPivot/PitchPivot/SpringArm3D"]
