@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://w0yjpb86tnt7"]
+
+[ext_resource type="Script" path="res://scripts/TightropePath.gd" id="1_qykor"]
+[ext_resource type="Script" path="res://scripts/TightropePolygon3D.gd" id="2_fd0i4"]
+
+[sub_resource type="Curve3D" id="Curve3D_76cfd"]
+
+[node name="TightRopePath" type="Path3D"]
+curve = SubResource("Curve3D_76cfd")
+script = ExtResource("1_qykor")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.999999, 36.7918, 8.17505, 25.6049)
+v_offset = 1.0
+rotation_mode = 0
+loop = false
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="PathFollow3D"]
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="."]
+use_collision = true
+collision_layer = 8
+collision_mask = 0
+polygon = PackedVector2Array()
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+smooth_faces = true
+script = ExtResource("2_fd0i4")
+number_of_vertices = 5
+radius = 0.1

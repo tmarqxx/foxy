@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://bvdulrl78mpn6"]
 
-[ext_resource type="PackedScene" uid="uid://c6fxthcq07sow" path="res://scenes/GrappleHookPoint.tscn" id="1_go8yj"]
+[ext_resource type="PackedScene" uid="uid://c6fxthcq07sow" path="res://scenes/GrappleSwingTarget.tscn" id="1_go8yj"]
 [ext_resource type="PackedScene" uid="uid://b0wusw0376pts" path="res://scenes/Platform.tscn" id="2_wrcl6"]
 [ext_resource type="PackedScene" uid="uid://clf42cotd1gl7" path="res://scenes/Player.tscn" id="3_ljgbj"]
 

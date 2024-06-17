@@ -9,7 +9,7 @@ signal update_movement_direction(direction: Vector3)
 @export var state_machine : StateMachine
 @export var animation_tree : AnimationTree
 @export var mesh_root: Node3D
-@export var camera : Node3D
+@export var camera : PlayerCamera3D
 
 @export_category("Speed Attributes")
 @export var movement_speed : float
@@ -23,9 +23,11 @@ signal update_movement_direction(direction: Vector3)
 @export var jump_distance_to_peak : float
 @export var jump_distance_to_floor: float
 
-@onready var jump_velocity : float = (2.0 * jump_peak_height * movement_speed) / jump_distance_to_peak
-@onready var jump_gravity : float = (-2.0 * jump_peak_height * pow(movement_speed, 2)) / pow(jump_distance_to_peak, 2)
-@onready var fall_gravity : float = (-2.0 * jump_peak_height * pow(movement_speed, 2)) / pow(jump_distance_to_floor, 2)
+@onready var standing_collision : CollisionShape3D = $StandingCollision
+
+@onready var jump_velocity : float = (2.0 * jump_peak_height * 10.0) / jump_distance_to_peak
+@onready var jump_gravity : float = (-2.0 * jump_peak_height * pow(10.0, 2)) / pow(jump_distance_to_peak, 2)
+@onready var fall_gravity : float = (-2.0 * jump_peak_height * pow(10.0, 2)) / pow(jump_distance_to_floor, 2)
 @onready var initial_rotation : float = self.rotation.y
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -36,10 +38,16 @@ var current_speed : float
 var current_direction : Vector3
 var previous_direction : Vector3
 
+var spawn_position : Vector3
+
 func _ready():
-	DebugOverlay.draw.add_vector(self, "velocity", 1, 1, Color(0, 0, 1, 0.5))
+	spawn_position = self.global_position
+	#DebugOverlay.draw.add_vector(self, "velocity", 1, 1, Color(0, 0, 1, 0.5))
 
 func _input(event):
+	if event.is_action_pressed("ui_cancel"):
+		get_tree().quit()
+	
 	if event.is_action_pressed("movement") or event.is_action_released("movement"):
 		_update_current_direction()
 		
@@ -56,7 +64,9 @@ func _input(event):
 		#state_machine.transition_to("airborne", { "air_jump": true })
 	
 
-#func _physics_process(delta: float):
+func _physics_process(delta: float):
+	if self.global_position.y < -20.0:
+		self.global_position = spawn_position
 	#var direction = current_direction.rotated(Vector3.UP, camera.get_yaw_rotation()) * -1
 	#
 	#if not is_on_floor():
@@ -102,13 +112,17 @@ func _update_current_direction():
 	current_direction = _get_input_direction()
 
 func get_movement_direction() -> Vector3:
-	return current_direction.rotated(Vector3.UP, camera.get_yaw_rotation()) * -1
-
-func get_previous_movement_direction() -> Vector3:
-	return previous_direction.rotated(Vector3.UP, camera.get_yaw_rotation()) * -1
+	var cam_forward = camera.get_forward_vector()
+	var cam_right = camera.get_right_vector()
+	
+	print("CAM FORWARD ", cam_forward)
+	print("CAM RIGHT ", cam_right)
+	print("CURRENT DIRECTION ", current_direction)
+	
+	return cam_forward * -current_direction.z + cam_right * current_direction.x
 
 func orient_toward(delta: float, direction: Vector3) -> void:
-	mesh_root.rotation.y = lerp_angle(mesh_root.rotation.y, atan2(direction.x, direction.z), 20 * delta)
+	mesh_root.global_rotation.y = lerp_angle(mesh_root.global_rotation.y, atan2(-direction.x, -direction.z), 20 * delta)
 
 func move(delta: float, speed: float) -> void:
 	var direction = get_movement_direction()
@@ -137,4 +151,14 @@ func set_up_vector(up: Vector3 = Vector3.UP) -> void:
 func reset_mesh_basis():
 	mesh_root.global_basis = Basis.IDENTITY
 
+func disable_collision():
+	standing_collision.set_disabled(true)
 
+func enable_collision():
+	standing_collision.set_disabled(false)
+
+
+
+
+func _on_climb_buffer_timer_timeout():
+	pass # Replace with function body.

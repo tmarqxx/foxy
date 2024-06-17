@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://cu8a3ncqbcio7"]
+
+[ext_resource type="Script" path="res://TightropeArrow.gd" id="1_luxfv"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_l4537"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 1.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_b4jwu"]
+top_radius = 0.15
+bottom_radius = 0.0
+height = 0.5
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2ol0c"]
+height = 0.5
+radius = 0.1
+
+[node name="TightropeArrow" type="RigidBody3D"]
+gravity_scale = 1.5
+center_of_mass_mode = 1
+center_of_mass = Vector3(0, 0, -1)
+freeze = true
+continuous_cd = true
+max_contacts_reported = 1
+contact_monitor = true
+script = ExtResource("1_luxfv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -5.82818e-08, 1.25237)
+mesh = SubResource("CylinderMesh_l4537")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 2.91409e-08, 0.252379)
+mesh = SubResource("CylinderMesh_b4jwu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.31134e-07, 1, 0, -1, 1.31134e-07, 0, 2.91409e-08, 0.252379)
+shape = SubResource("CylinderShape3D_2ol0c")
+
+[node name="AnchorPoint" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.00985)
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.49547)
+target_position = Vector3(0, 0, -1)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

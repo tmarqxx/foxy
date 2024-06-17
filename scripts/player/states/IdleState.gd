@@ -1,8 +1,7 @@
-class_name IdleState
 extends PlayerState
 
-#func enter(payload: Dictionary = {}):
-	#player.movement_speed = 0.0
+func enter(payload: Dictionary = {}):
+	player.camera.release_platform_snap()
 
 func handle_input(event):
 	if player.is_on_floor() and event.is_action_pressed("jump"):
@@ -12,7 +11,7 @@ func handle_input(event):
 	elif player.is_moving():
 		transition_to.emit(self, "Walk")
 
-func _physics_update(delta):
+func physics_update(delta):
 	player.move(delta, 0.0)
 	
 	if not player.is_on_floor():

@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://y6vo5kxfydfw"
+path="res://.godot/imported/Hammer.obj-2728edc5f4bb88678f39d515873f3833.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Hammer.obj-2728edc5f4bb88678f39d515873f3833.mesh"]
+
+source_file="res://assets/meshes/Weapons_obj/Hammer.obj"
+dest_files=["res://.godot/imported/Hammer.obj-2728edc5f4bb88678f39d515873f3833.mesh", "res://.godot/imported/Hammer.obj-2728edc5f4bb88678f39d515873f3833.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

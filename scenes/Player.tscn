@@ -1,16 +1,23 @@
-[gd_scene load_steps=15 format=3 uid="uid://clf42cotd1gl7"]
+[gd_scene load_steps=27 format=3 uid="uid://clf42cotd1gl7"]
 
 [ext_resource type="Script" path="res://scripts/player/Player.gd" id="1_b7y6r"]
+[ext_resource type="Shape3D" uid="uid://b3a70kdlwf73i" path="res://resources/PlayerStandingCollisionShape.tres" id="2_hncqw"]
 [ext_resource type="Script" path="res://scripts/player/states/IdleState.gd" id="3_1f0m1"]
 [ext_resource type="Script" path="res://scripts/StateMachine.gd" id="4_ahg3t"]
 [ext_resource type="Script" path="res://scripts/player/states/WalkState.gd" id="4_kw0no"]
 [ext_resource type="Script" path="res://scripts/player/states/SprintState.gd" id="5_fgvml"]
 [ext_resource type="Script" path="res://scripts/player/states/GrappleSwingState.gd" id="6_glrl8"]
 [ext_resource type="Script" path="res://scripts/player/states/AirborneState.gd" id="6_vdthi"]
-[ext_resource type="PackedScene" uid="uid://c5k4lj0apt517" path="res://scenes/BoomCamera3D.tscn" id="7_0nxla"]
 [ext_resource type="PackedScene" uid="uid://pse67xrkho65" path="res://scenes/GrapplingHook.tscn" id="8_2f53p"]
+[ext_resource type="Script" path="res://scripts/player/states/SpireJumpState.gd" id="9_vsmii"]
+[ext_resource type="Script" path="res://scripts/SpirePerchState.gd" id="10_huei1"]
+[ext_resource type="Script" path="res://scripts/player/TightropeWalkState.gd" id="11_b876p"]
+[ext_resource type="Script" path="res://scenes/AimState.gd" id="12_q73os"]
+[ext_resource type="Script" path="res://scenes/Look.gd" id="12_rw07x"]
+[ext_resource type="PackedScene" uid="uid://c5k4lj0apt517" path="res://scenes/PlayerCamera3D.tscn" id="13_jyxac"]
+[ext_resource type="PackedScene" uid="uid://c8plq8vtrqoym" path="res://scenes/Bow.tscn" id="15_u52cg"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gwthl"]
+[sub_resource type="Curve3D" id="Curve3D_gi3m1"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ipvyw"]
 
@@ -19,44 +26,112 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5rniw"]
 albedo_color = Color(0.0383972, 0.0383972, 0.0383972, 1)
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_636k3"]
+height = 16.0
+radius = 3.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0wf52"]
+height = 16.0
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_fjcwa"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_q50wf"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_d8urb"]
+height = 16.0
+radius = 3.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_07dci"]
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("state_machine", "mesh_root", "camera")]
 script = ExtResource("1_b7y6r")
-state_machine = NodePath("StateMachine")
+state_machine = NodePath("MovementStateMachine")
 mesh_root = NodePath("MeshRig")
-camera = NodePath("BoomCamera3D")
-movement_speed = 10.0
-jump_peak_height = 2.5
+camera = NodePath("PlayerCamera3D")
+movement_speed = 8.0
+jump_peak_height = 2.0
 jump_distance_to_peak = 4.0
 jump_distance_to_floor = 3.0
 
 [node name="StandingCollision" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape3D_gwthl")
+shape = ExtResource("2_hncqw")
 
 [node name="RayCast3D" type="RayCast3D" parent="StandingCollision"]
 target_position = Vector3(0, 1, 0)
 
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+[node name="MovementStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("4_ahg3t")
 initial_state = NodePath("Idle")
 
-[node name="Idle" type="Node" parent="StateMachine"]
+[node name="Idle" type="Node" parent="MovementStateMachine"]
 script = ExtResource("3_1f0m1")
 
-[node name="Walk" type="Node" parent="StateMachine"]
+[node name="Walk" type="Node" parent="MovementStateMachine"]
 script = ExtResource("4_kw0no")
 
-[node name="Sprint" type="Node" parent="StateMachine"]
+[node name="Sprint" type="Node" parent="MovementStateMachine"]
 script = ExtResource("5_fgvml")
 
-[node name="Airborne" type="Node" parent="StateMachine" node_paths=PackedStringArray("grappling_hook")]
+[node name="Airborne" type="Node" parent="MovementStateMachine" node_paths=PackedStringArray("grappling_hook", "caster", "grapple_cast", "surrounding_cast", "spire_cast", "tightrope_cast", "tightrope_cast_2", "blocked_cast")]
 script = ExtResource("6_vdthi")
 grappling_hook = NodePath("../../GrapplingHook")
+caster = NodePath("../../ShapeCast3D")
+grapple_cast = NodePath("../../GrappleCast")
+surrounding_cast = NodePath("../../SurroundingCast")
+spire_cast = NodePath("../../MeshRig/SpireCast")
+tightrope_cast = NodePath("../../MeshRig/TightropeCast")
+tightrope_cast_2 = NodePath("../../MeshRig/TightropeCast2")
+blocked_cast = NodePath("../../RayCast3D")
 
-[node name="GrappleSwing" type="Node" parent="StateMachine" node_paths=PackedStringArray("grappling_hook")]
+[node name="CoyoteTimer" type="Timer" parent="MovementStateMachine/Airborne"]
+process_callback = 0
+wait_time = 0.1
+one_shot = true
+
+[node name="DoubleJumpBufferTimer" type="Timer" parent="MovementStateMachine/Airborne"]
+process_callback = 0
+wait_time = 0.05
+one_shot = true
+
+[node name="ClimbBufferTimer" type="Timer" parent="MovementStateMachine/Airborne"]
+process_callback = 0
+wait_time = 0.1
+one_shot = true
+
+[node name="GrappleSwing" type="Node" parent="MovementStateMachine" node_paths=PackedStringArray("grappling_hook")]
 script = ExtResource("6_glrl8")
 grappling_hook = NodePath("../../GrapplingHook")
+
+[node name="SpireJump" type="Node" parent="MovementStateMachine"]
+script = ExtResource("9_vsmii")
+
+[node name="Path3D" type="Path3D" parent="MovementStateMachine/SpireJump"]
+curve = SubResource("Curve3D_gi3m1")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="MovementStateMachine/SpireJump/Path3D"]
+rotation_mode = 1
+loop = false
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="MovementStateMachine/SpireJump/Path3D/PathFollow3D"]
+remote_path = NodePath("../../../../..")
+update_scale = false
+
+[node name="SpirePerch" type="Node" parent="MovementStateMachine"]
+script = ExtResource("10_huei1")
+
+[node name="TightRopeWalk" type="Node" parent="MovementStateMachine"]
+script = ExtResource("11_b876p")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("4_ahg3t")
+initial_state = NodePath("Look")
+
+[node name="Look" type="Node" parent="StateMachine"]
+script = ExtResource("12_rw07x")
+
+[node name="Aim" type="Node" parent="StateMachine" node_paths=PackedStringArray("bow")]
+script = ExtResource("12_q73os")
+bow = NodePath("../../MeshRig/Bow")
 
 [node name="MeshRig" type="Node3D" parent="."]
 
@@ -64,9 +139,34 @@ grappling_hook = NodePath("../../GrapplingHook")
 mesh = SubResource("CapsuleMesh_ipvyw")
 
 [node name="Glasses" type="MeshInstance3D" parent="MeshRig"]
-transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.440662, 0.305765)
+transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.441, -0.306)
 mesh = SubResource("BoxMesh_5t44h")
 surface_material_override/0 = SubResource("StandardMaterial3D_5rniw")
+
+[node name="Bow" parent="MeshRig" node_paths=PackedStringArray("player") instance=ExtResource("15_u52cg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.669221, 0, -0.399918)
+player = NodePath("../..")
+
+[node name="SpireCast" type="ShapeCast3D" parent="MeshRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, -3)
+shape = SubResource("CylinderShape3D_636k3")
+target_position = Vector3(0, 0, 0)
+collision_mask = 4
+collide_with_areas = true
+
+[node name="TightropeCast" type="ShapeCast3D" parent="MeshRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
+shape = SubResource("CylinderShape3D_0wf52")
+target_position = Vector3(0, 0, -5.5)
+collision_mask = 8
+collide_with_areas = true
+
+[node name="TightropeCast2" type="ShapeCast3D" parent="MeshRig"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, -5.5)
+shape = SubResource("CylinderShape3D_0wf52")
+target_position = Vector3(0, 0, 0)
+collision_mask = 8
+collide_with_areas = true
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 active = false
@@ -75,13 +175,42 @@ anim_player = NodePath("../AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
-[node name="BoomCamera3D" parent="." node_paths=PackedStringArray("subject") instance=ExtResource("7_0nxla")]
+[node name="PlayerCamera3D" parent="." node_paths=PackedStringArray("subject") instance=ExtResource("13_jyxac")]
 subject = NodePath("..")
 camera_offset = Vector3(0, 1.5, 0)
 default_pitch = 10.0
 
-[node name="GrapplingHook" parent="." node_paths=PackedStringArray("player") instance=ExtResource("8_2f53p")]
-player = NodePath("..")
+[node name="GrapplingHook" parent="." node_paths=PackedStringArray("caster") instance=ExtResource("8_2f53p")]
+caster = NodePath("../ShapeCast3D")
 
-[connection signal="set_camera_rotation" from="BoomCamera3D" to="." method="_on_set_camera_rotation"]
-[connection signal="hook_engaged" from="GrapplingHook" to="StateMachine/Airborne" method="_handle_hook_engaged"]
+[node name="ShapeCast3D" type="ShapeCast3D" parent="."]
+shape = SubResource("SphereShape3D_q50wf")
+target_position = Vector3(0, 0, 0)
+collision_mask = 6
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="SurroundingCast" type="ShapeCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
+shape = SubResource("CylinderShape3D_d8urb")
+target_position = Vector3(0, 0, 0)
+collision_mask = 12
+collide_with_areas = true
+
+[node name="GrappleCast" type="ShapeCast3D" parent="."]
+shape = SubResource("SphereShape3D_07dci")
+target_position = Vector3(0, 0, 0)
+collision_mask = 2
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+enabled = false
+target_position = Vector3(0, 0, 0)
+collision_mask = 13
+
+[connection signal="timeout" from="MovementStateMachine/Airborne/CoyoteTimer" to="MovementStateMachine/Airborne" method="_on_coyote_timer_timeout"]
+[connection signal="timeout" from="MovementStateMachine/Airborne/DoubleJumpBufferTimer" to="MovementStateMachine/Airborne" method="_on_double_jump_buffer_timer_timeout"]
+[connection signal="timeout" from="MovementStateMachine/Airborne/ClimbBufferTimer" to="MovementStateMachine/Airborne" method="_on_climb_buffer_timer_timeout"]
+[connection signal="set_camera_rotation" from="PlayerCamera3D" to="." method="_on_set_camera_rotation"]
+[connection signal="hook_engaged" from="GrapplingHook" to="MovementStateMachine/Airborne" method="_handle_hook_engaged"]

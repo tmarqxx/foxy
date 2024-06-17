@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://7p8osqbikuxc"]
+
+[ext_resource type="Script" path="res://scripts/TightropeAnchorPoint.gd" id="1_fjd2n"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_vuis1"]
+size = Vector3(0.25, 1, 0.25)
+
+[node name="TightRopeAnchor" type="Node3D"]
+script = ExtResource("1_fjd2n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("BoxMesh_vuis1")

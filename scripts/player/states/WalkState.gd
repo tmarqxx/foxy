@@ -1,8 +1,8 @@
 class_name WalkState
 extends PlayerState
 
-#func enter(_payload: Dictionary = {}):
-	#player.current_speed = player.movement_speed
+func enter(_payload: Dictionary = {}):
+	player.camera.release_platform_snap()
 
 func handle_input(event):
 	if event.is_action_pressed("jump"):

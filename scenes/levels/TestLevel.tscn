@@ -1,8 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://520xbgpf8kw3"]
+[gd_scene load_steps=15 format=3 uid="uid://520xbgpf8kw3"]
 
 [ext_resource type="PackedScene" uid="uid://b0wusw0376pts" path="res://scenes/Platform.tscn" id="1_ohtn0"]
 [ext_resource type="PackedScene" uid="uid://clf42cotd1gl7" path="res://scenes/Player.tscn" id="2_0ngau"]
-[ext_resource type="PackedScene" uid="uid://c6fxthcq07sow" path="res://scenes/GrappleHookPoint.tscn" id="3_ie23a"]
+[ext_resource type="PackedScene" uid="uid://c6fxthcq07sow" path="res://scenes/GrappleSwingTarget.tscn" id="3_ie23a"]
+[ext_resource type="PackedScene" uid="uid://bkskn0thwu5u3" path="res://scenes/SpireJumpTarget.tscn" id="4_lglqc"]
+[ext_resource type="PackedScene" uid="uid://w0yjpb86tnt7" path="res://scenes/TightropePath.tscn" id="5_d4pbn"]
+[ext_resource type="PackedScene" uid="uid://7p8osqbikuxc" path="res://scenes/TightropeAnchor.tscn" id="6_obmcr"]
 
 [sub_resource type="Gradient" id="Gradient_buo6s"]
 offsets = PackedFloat32Array(0.163934, 1)
@@ -10,7 +13,7 @@ offsets = PackedFloat32Array(0.163934, 1)
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_h0ktl"]
 frequency = 0.0092
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mjrgc"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_64e5w"]
 height = 256
 seamless = true
 color_ramp = SubResource("Gradient_buo6s")
@@ -19,15 +22,29 @@ noise = SubResource("FastNoiseLite_h0ktl")
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hjux7"]
 sky_top_color = Color(0.284315, 0.529143, 0.846841, 1)
 sky_horizon_color = Color(0.693369, 0.820787, 0.951173, 1)
-sky_cover = SubResource("NoiseTexture2D_mjrgc")
+sky_cover = SubResource("NoiseTexture2D_64e5w")
 
-[sub_resource type="Sky" id="Sky_k7nvr"]
+[sub_resource type="Sky" id="Sky_0y6t0"]
 sky_material = SubResource("ProceduralSkyMaterial_hjux7")
 
 [sub_resource type="Environment" id="Environment_wm8h4"]
 background_mode = 2
-sky = SubResource("Sky_k7nvr")
+sky = SubResource("Sky_0y6t0")
 ambient_light_color = Color(0.977937, 0.977937, 0.977937, 1)
+
+[sub_resource type="Curve3D" id="Curve3D_hhlh6"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, -2.15978, -1.54971, -10.5544, 36.7096, 7.17505, 23.14, 2.16246, -0.881277, 10.5675, 0, 0, 0, 28.0634, 5.83739, -19.1121),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="Curve3D" id="Curve3D_mwubh"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, -5.92548, -3.01727, -3.45587, 33.0941, 7.17505, 23.14, 5.98829, 0.75118, 3.4925, 0, 0, 0, 9.26279, -0.366051, 9.24105),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
 [node name="TestLevel" type="Node3D"]
 
@@ -63,13 +80,62 @@ collision_node = NodePath("../Platform/CollisionShape3D")
 size = Vector3(20, 0.5, 20)
 
 [node name="Platform5" parent="Platforms" node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("1_ohtn0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5423, 4.91886, -16.5759)
+transform = Transform3D(-0.602122, 0, -0.798404, 0, 1, 0, 0.798404, 0, -0.602122, 26.7824, 4.91886, -31.3257)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="Platform6" parent="Platforms" node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("1_ohtn0")]
+transform = Transform3D(0.621148, 0.554155, 0.554155, 0, 0.707107, -0.707107, -0.783693, 0.439218, 0.439218, 39.2926, -2.54985, -21.6678)
+mesh_node = NodePath("../Platform/MeshInstance3D")
+collision_node = NodePath("../Platform/CollisionShape3D")
+size = Vector3(20, 0.5, 20)
+
+[node name="Platform7" parent="Platforms" node_paths=PackedStringArray("mesh_node", "collision_node") instance=ExtResource("1_ohtn0")]
+transform = Transform3D(0.993706, 0.112024, -4.89672e-09, 0, -4.37114e-08, -1, -0.112024, 0.993706, -4.34362e-08, 41.7171, -3.39861, 22.5467)
 mesh_node = NodePath("../Platform/MeshInstance3D")
 collision_node = NodePath("../Platform/CollisionShape3D")
 size = Vector3(20, 0.5, 20)
 
 [node name="Player" parent="." instance=ExtResource("2_0ngau")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.23785, 0.803025, 3.63084)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 3.39209, 1.86384, -4.21287)
 
 [node name="GrappleHookPoint" parent="." instance=ExtResource("3_ie23a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5087, 7.51711, 12.2552)
+
+[node name="GrappleHookPoint2" parent="." instance=ExtResource("3_ie23a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.4887, 12.8233, -10.1611)
+
+[node name="SpireJumpTarget" parent="." instance=ExtResource("4_lglqc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.678, -0.630666, 35.4979)
+
+[node name="SpireJumpTarget2" parent="." instance=ExtResource("4_lglqc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5662, -2.03215, 25.8355)
+
+[node name="SpireJumpTarget3" parent="." instance=ExtResource("4_lglqc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5083, -3.18838, 25.9834)
+
+[node name="SpireJumpTarget4" parent="." instance=ExtResource("4_lglqc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.9265, -3.18838, 27.6475)
+
+[node name="TightRopePath" parent="." node_paths=PackedStringArray("node_a", "node_b") instance=ExtResource("5_d4pbn")]
+curve = SubResource("Curve3D_hhlh6")
+node_a = NodePath("TightRopeAnchor")
+node_b = NodePath("TightRopeAnchor2")
+
+[node name="TightRopeAnchor" parent="TightRopePath" instance=ExtResource("6_obmcr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.7096, 7.17505, 23.14)
+
+[node name="TightRopeAnchor2" parent="TightRopePath" instance=ExtResource("6_obmcr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.0634, 5.83739, -19.1121)
+
+[node name="TightRopePath2" parent="." node_paths=PackedStringArray("node_a", "node_b") instance=ExtResource("5_d4pbn")]
+curve = SubResource("Curve3D_mwubh")
+node_a = NodePath("TightRopeAnchor")
+node_b = NodePath("TightRopeAnchor2")
+
+[node name="TightRopeAnchor" parent="TightRopePath2" instance=ExtResource("6_obmcr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.0941, 7.17505, 23.14)
+
+[node name="TightRopeAnchor2" parent="TightRopePath2" instance=ExtResource("6_obmcr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.26279, -0.366051, 9.24105)

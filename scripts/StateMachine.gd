@@ -7,6 +7,8 @@ var current_state : State
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	await owner.ready
+	
 	for node in get_children():
 		if node is State:
 			states[node.name.to_lower()] = node
