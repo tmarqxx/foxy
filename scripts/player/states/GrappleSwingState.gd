@@ -17,6 +17,7 @@ var dump_count : int = INITIAL_DUMP_COUNT
 var has_set_initial_velocity : bool
 
 func enter(payload: Dictionary = {}):
+	player.skin.fall()
 	player.camera.release_platform_snap()
 	player.disable_collision()
 	has_set_initial_velocity = false

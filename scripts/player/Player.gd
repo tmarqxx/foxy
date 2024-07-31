@@ -9,6 +9,7 @@ signal update_movement_direction(direction: Vector3)
 @export var state_machine : StateMachine
 @export var animation_tree : AnimationTree
 @export var mesh_root: Node3D
+@export var skin : Node3D
 @export var camera : PlayerCamera3D
 
 @export_category("Speed Attributes")
@@ -19,15 +20,35 @@ signal update_movement_direction(direction: Vector3)
 
 @export_category("Jump Attributes")
 @export var jump_peak_height : float
+@export var jump_time_to_peak: float
+@export var jump_hang_time: float
+@export var jump_time_to_descend: float
 #@export var jump_peak_distance : float
 @export var jump_distance_to_peak : float
 @export var jump_distance_to_floor: float
 
-@onready var standing_collision : CollisionShape3D = $StandingCollision
+@onready var jump_velocity := (2.0 * jump_peak_height) / jump_time_to_peak
+@onready var jump_gravity := (-2.0 * jump_peak_height) / (jump_time_to_peak * jump_time_to_peak)
+@onready var fall_gravity := (-2.0 * jump_peak_height) / (jump_time_to_descend * jump_time_to_descend)
 
-@onready var jump_velocity : float = (2.0 * jump_peak_height * 10.0) / jump_distance_to_peak
-@onready var jump_gravity : float = (-2.0 * jump_peak_height * pow(10.0, 2)) / pow(jump_distance_to_peak, 2)
-@onready var fall_gravity : float = (-2.0 * jump_peak_height * pow(10.0, 2)) / pow(jump_distance_to_floor, 2)
+@export_category("Dive Attributes")
+@export var dive_peak_height: float
+@export var dive_time_to_peak: float
+@export var dive_time_to_descened: float
+
+#@onready var dive_velocity := (2.0 * dive_peak_height) / dive_time_to_peak
+#@onready var dive_gravity := (-2.0 * jump_peak_height) / (jump_time_to_peak * jump_time_to_peak)
+#@onready var _gravity := (-2.0 * jump_peak_height) / (jump_time_to_descend * jump_time_to_descend)
+
+
+@onready var standing_collision : CollisionShape3D = $StandingCollision
+@onready var edge_raycast_head: RayCast3D = $GobotSkin/EdgeRayCast
+@onready var edge_raycast_body: RayCast3D = $GobotSkin/EdgeRayCast2
+@onready var bounce_raycast: RayCast3D = $GobotSkin/BounceRaycast
+
+#@onready var jump_velocity : float = (2.0 * jump_peak_height * 10.0) / jump_distance_to_peak
+#@onready var jump_gravity : float = (-2.0 * jump_peak_height * pow(10.0, 2)) / pow(jump_distance_to_peak, 2)
+#@onready var fall_gravity : float = (-2.0 * jump_peak_height * pow(10.0, 2)) / pow(jump_distance_to_floor, 2)
 @onready var initial_rotation : float = self.rotation.y
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -111,23 +132,22 @@ func _update_current_direction():
 	
 	current_direction = _get_input_direction()
 
+func get_camera_forward() -> Vector3:
+	return camera.get_forward_vector()
+
 func get_movement_direction() -> Vector3:
 	var cam_forward = camera.get_forward_vector()
 	var cam_right = camera.get_right_vector()
 	
-	print("CAM FORWARD ", cam_forward)
-	print("CAM RIGHT ", cam_right)
-	print("CURRENT DIRECTION ", current_direction)
-	
 	return cam_forward * -current_direction.z + cam_right * current_direction.x
 
 func orient_toward(delta: float, direction: Vector3) -> void:
-	mesh_root.global_rotation.y = lerp_angle(mesh_root.global_rotation.y, atan2(-direction.x, -direction.z), 20 * delta)
+	skin.global_rotation.y = lerp_angle(skin.global_rotation.y, atan2(-direction.x, -direction.z), 20 * delta)
 
-func move(delta: float, speed: float) -> void:
-	var direction = get_movement_direction()
+func move(delta: float, speed: float, direction: Vector3 = get_movement_direction()) -> void:
+	#var direction = get_movement_direction()
 	
-	if is_moving():
+	if direction.length() > 0.0:
 		velocity.x = direction.x * speed
 		velocity.z = direction.z * speed
 		
@@ -139,17 +159,17 @@ func move(delta: float, speed: float) -> void:
 	move_and_slide()
 
 func set_up_vector(up: Vector3 = Vector3.UP) -> void:
-	var basis = mesh_root.global_basis
+	var basis = skin.global_basis
 	basis.y = up
 	#if up == Vector3.ZERO:
 		#basis.z = -1 * get_movement_direction()
 	#else:
 	basis.x = -basis.z.cross(up)
 	basis = basis.orthonormalized()
-	mesh_root.global_basis = basis
+	skin.global_basis = basis
 
 func reset_mesh_basis():
-	mesh_root.global_basis = Basis.IDENTITY
+	skin.global_basis = Basis.IDENTITY
 
 func disable_collision():
 	standing_collision.set_disabled(true)
@@ -157,8 +177,20 @@ func disable_collision():
 func enable_collision():
 	standing_collision.set_disabled(false)
 
+func is_on_edge():
+	return edge_raycast_body.is_colliding() and not edge_raycast_head.is_colliding()
 
+func is_on_wall_surface():
+	return edge_raycast_body.is_colliding() and edge_raycast_head.is_colliding()
 
+func is_on_trampoline():
+	return bounce_raycast.is_colliding()
+
+func get_trampoline_collider():
+	return bounce_raycast.get_collider()
+
+func handle_bounce():
+	pass
 
 func _on_climb_buffer_timer_timeout():
 	pass # Replace with function body.

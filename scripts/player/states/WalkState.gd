@@ -3,6 +3,7 @@ extends PlayerState
 
 func enter(_payload: Dictionary = {}):
 	player.camera.release_platform_snap()
+	player.skin.run()
 
 func handle_input(event):
 	if event.is_action_pressed("jump"):

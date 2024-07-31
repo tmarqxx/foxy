@@ -24,6 +24,7 @@ var _payload : Dictionary
 func enter(payload: Dictionary = {}):
 	_payload = payload
 	initial_position = player.global_position
+	player.skin.flip()
 	
 	#if payload.has("to_tightrope"):
 		#var tightrope_node = payload.get("tightrope_node")

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/GrapplingHook.gd" id="1_xut6r"]
 [ext_resource type="Shape3D" uid="uid://b3a70kdlwf73i" path="res://resources/PlayerStandingCollisionShape.tres" id="2_pnrsg"]
-[ext_resource type="Script" path="res://scripts/DynamicPolygon3D.gd" id="3_be1cd"]
+[ext_resource type="Script" path="res://custom_nodes/tightrope_path_3d.gd" id="3_be1cd"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_jjnpj"]
 

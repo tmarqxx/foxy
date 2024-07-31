@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://br83ft13lyk6g"]
+
+[ext_resource type="Script" path="res://custom_nodes/BounceArea3D.gd" id="1_tu264"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_lneiu"]
+size = Vector3(0.2, 0.2, 3)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_67sdv"]
+points = PackedVector3Array(-0.112908, -0.112908, -1.51293, 0.119805, 0.119805, 1.51293, 0.119805, -0.112908, 1.51293, 0.119805, 0.119805, -1.51293, -0.112908, 0.119805, 1.51293, -0.112908, -0.112908, 1.51293, 0.119805, -0.112908, -1.51293, -0.112908, 0.119805, -1.51293)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jinqs"]
+size = Vector2(2.7, 3)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ty1kg"]
+points = PackedVector3Array(-1.37381, -0.0238049, -1.52351, 1.3881, 0.0238049, 1.52351, 1.3881, -0.0238049, 1.52351, 1.3881, 0.0238049, -1.52351, -1.37381, 0.0238049, 1.52351, -1.37381, -0.0238049, 1.52351, 1.3881, -0.0238049, -1.52351, -1.37381, 0.0238049, -1.52351)
+
+[node name="Awning" type="Node3D"]
+
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0.5, 0)
+
+[node name="Post1" type="StaticBody3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+collision_layer = 2
+collision_mask = 16
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/Post1"]
+mesh = SubResource("BoxMesh_lneiu")
+skeleton = NodePath("../../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Post1"]
+shape = SubResource("ConvexPolygonShape3D_67sdv")
+
+[node name="Post2" type="StaticBody3D" parent="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
+collision_layer = 2
+collision_mask = 16
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/Post2"]
+mesh = SubResource("BoxMesh_lneiu")
+skeleton = NodePath("../../Post1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Post2"]
+shape = SubResource("ConvexPolygonShape3D_67sdv")
+
+[node name="BounceArea3D" type="StaticBody3D" parent="Node3D"]
+collision_layer = 2
+collision_mask = 16
+script = ExtResource("1_tu264")
+bounciness = 2.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/BounceArea3D"]
+mesh = SubResource("PlaneMesh_jinqs")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/BounceArea3D"]
+shape = SubResource("ConvexPolygonShape3D_ty1kg")

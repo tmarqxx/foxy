@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Bow.gd" id="1_rcwwy"]
 [ext_resource type="ArrayMesh" uid="uid://dn0y32fu5dnrn" path="res://assets/meshes/Weapons_obj/Bow.obj" id="2_20aod"]
-[ext_resource type="Script" path="res://scripts/DynamicPolygon3D.gd" id="3_l0r53"]
+[ext_resource type="Script" path="res://custom_nodes/tightrope_path_3d.gd" id="3_l0r53"]
 
 [sub_resource type="Curve3D" id="Curve3D_e7s6y"]
 

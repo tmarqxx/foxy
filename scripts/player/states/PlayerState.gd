@@ -9,7 +9,6 @@ func _ready():
 	await owner.ready
 	# The `as` keyword casts the `owner` variable to the `Player` type.
 	# If the `owner` is not a `Player`, we'll get `null`.
-	print("Owner ", owner)
 	player = owner as Player
 	# This check will tell us if we inadvertently assign a derived state script
 	# in a scene other than `Player.tscn`, which would be unintended. This can

@@ -5,6 +5,8 @@ var states : Dictionary = {}
 @export var initial_state : State
 var current_state : State
 
+var is_transitioning : bool = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	await owner.ready
@@ -22,9 +24,15 @@ func _input(event):
 	current_state.handle_input(event)
 
 func _process(delta):
+	if is_transitioning:
+		return
+	
 	current_state.update(delta)
 
 func _physics_process(delta):
+	if is_transitioning:
+		return
+	
 	current_state.physics_update(delta)
 
 #func transition_to(target_state_name: String, payload: Dictionary = {}):
@@ -40,20 +48,26 @@ func _physics_process(delta):
 	#current_state = next_state
 
 func _handle_transition_to(source_state: State, target_state_name: String, payload: Dictionary = {}) -> void:
+	is_transitioning = true
+	
 	if source_state != current_state:
 		print("Invalid _handle_transition_to call - trying from %s, but currently in %s" % [source_state.name, target_state_name])
+		is_transitioning = false
 		return
 	
 	var new_state = states.get(target_state_name.to_lower())
 	
 	if not new_state:
 		print("New state is empty")
+		is_transitioning = false
 		return
 	
 	payload.merge({ "source_state_name": source_state.name })
 	
 	current_state.exit()
 	new_state.enter(payload)
+	
 	print("NEW STATE: ", new_state.name)
 	
 	current_state = new_state
+	is_transitioning = false

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://4ebs86vuole2"]
+
+[node name="gobot"]
+
+[node name="Gobot" parent="Armature/Skeleton3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7, 0)

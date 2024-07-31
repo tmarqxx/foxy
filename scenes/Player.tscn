@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://clf42cotd1gl7"]
+[gd_scene load_steps=39 format=3 uid="uid://clf42cotd1gl7"]
 
 [ext_resource type="Script" path="res://scripts/player/Player.gd" id="1_b7y6r"]
 [ext_resource type="Shape3D" uid="uid://b3a70kdlwf73i" path="res://resources/PlayerStandingCollisionShape.tres" id="2_hncqw"]
@@ -8,23 +8,21 @@
 [ext_resource type="Script" path="res://scripts/player/states/SprintState.gd" id="5_fgvml"]
 [ext_resource type="Script" path="res://scripts/player/states/GrappleSwingState.gd" id="6_glrl8"]
 [ext_resource type="Script" path="res://scripts/player/states/AirborneState.gd" id="6_vdthi"]
+[ext_resource type="Script" path="res://scenes/GroundedState.gd" id="7_1gf8p"]
 [ext_resource type="PackedScene" uid="uid://pse67xrkho65" path="res://scenes/GrapplingHook.tscn" id="8_2f53p"]
 [ext_resource type="Script" path="res://scripts/player/states/SpireJumpState.gd" id="9_vsmii"]
 [ext_resource type="Script" path="res://scripts/SpirePerchState.gd" id="10_huei1"]
 [ext_resource type="Script" path="res://scripts/player/TightropeWalkState.gd" id="11_b876p"]
 [ext_resource type="Script" path="res://scenes/AimState.gd" id="12_q73os"]
 [ext_resource type="Script" path="res://scenes/Look.gd" id="12_rw07x"]
+[ext_resource type="Script" path="res://scenes/WallSlideState.gd" id="12_vdvl1"]
 [ext_resource type="PackedScene" uid="uid://c5k4lj0apt517" path="res://scenes/PlayerCamera3D.tscn" id="13_jyxac"]
+[ext_resource type="Script" path="res://scenes/EdgeGrabState.gd" id="13_q7isu"]
+[ext_resource type="Shader" path="res://assets/shaders/cel2.gdshader" id="14_jemcq"]
 [ext_resource type="PackedScene" uid="uid://c8plq8vtrqoym" path="res://scenes/Bow.tscn" id="15_u52cg"]
+[ext_resource type="PackedScene" uid="uid://cy36aygvs66pn" path="res://models/gobot/gobot_skin.tscn" id="18_vl1bs"]
 
 [sub_resource type="Curve3D" id="Curve3D_gi3m1"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_ipvyw"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_5t44h"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5rniw"]
-albedo_color = Color(0.0383972, 0.0383972, 0.0383972, 1)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_636k3"]
 height = 16.0
@@ -32,6 +30,43 @@ radius = 3.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0wf52"]
 height = 16.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ipvyw"]
+
+[sub_resource type="Gradient" id="Gradient_cg5nk"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.5)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_vf6nn"]
+gradient = SubResource("Gradient_cg5nk")
+
+[sub_resource type="Gradient" id="Gradient_sey2p"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.5)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_2eo6e"]
+gradient = SubResource("Gradient_sey2p")
+
+[sub_resource type="Gradient" id="Gradient_qowba"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.2)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_yxc46"]
+gradient = SubResource("Gradient_qowba")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ooll0"]
+render_priority = 0
+shader = ExtResource("14_jemcq")
+shader_parameter/albedo = Color(0.622196, 0.184308, 0.0901364, 1)
+shader_parameter/color_gradient = SubResource("GradientTexture1D_vf6nn")
+shader_parameter/fresnel_gradient = SubResource("GradientTexture1D_2eo6e")
+shader_parameter/rim_gradient = SubResource("GradientTexture1D_yxc46")
+
+[sub_resource type="BoxMesh" id="BoxMesh_5t44h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5rniw"]
+albedo_color = Color(0.0383972, 0.0383972, 0.0383972, 1)
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_fjcwa"]
 
@@ -43,13 +78,16 @@ radius = 3.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_07dci"]
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("state_machine", "mesh_root", "camera")]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("state_machine", "mesh_root", "skin", "camera")]
 script = ExtResource("1_b7y6r")
 state_machine = NodePath("MovementStateMachine")
-mesh_root = NodePath("MeshRig")
+mesh_root = NodePath("GobotSkin")
+skin = NodePath("GobotSkin")
 camera = NodePath("PlayerCamera3D")
-movement_speed = 8.0
-jump_peak_height = 2.0
+movement_speed = 7.0
+jump_peak_height = 3.0
+jump_time_to_peak = 0.45
+jump_time_to_descend = 0.3
 jump_distance_to_peak = 4.0
 jump_distance_to_floor = 3.0
 
@@ -61,7 +99,7 @@ target_position = Vector3(0, 1, 0)
 
 [node name="MovementStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("4_ahg3t")
-initial_state = NodePath("Idle")
+initial_state = NodePath("Grounded")
 
 [node name="Idle" type="Node" parent="MovementStateMachine"]
 script = ExtResource("3_1f0m1")
@@ -72,15 +110,18 @@ script = ExtResource("4_kw0no")
 [node name="Sprint" type="Node" parent="MovementStateMachine"]
 script = ExtResource("5_fgvml")
 
+[node name="Grounded" type="Node" parent="MovementStateMachine"]
+script = ExtResource("7_1gf8p")
+
 [node name="Airborne" type="Node" parent="MovementStateMachine" node_paths=PackedStringArray("grappling_hook", "caster", "grapple_cast", "surrounding_cast", "spire_cast", "tightrope_cast", "tightrope_cast_2", "blocked_cast")]
 script = ExtResource("6_vdthi")
 grappling_hook = NodePath("../../GrapplingHook")
 caster = NodePath("../../ShapeCast3D")
 grapple_cast = NodePath("../../GrappleCast")
 surrounding_cast = NodePath("../../SurroundingCast")
-spire_cast = NodePath("../../MeshRig/SpireCast")
-tightrope_cast = NodePath("../../MeshRig/TightropeCast")
-tightrope_cast_2 = NodePath("../../MeshRig/TightropeCast2")
+spire_cast = NodePath("../../GobotSkin/SpireCast")
+tightrope_cast = NodePath("../../GobotSkin/TightropeCast")
+tightrope_cast_2 = NodePath("../../GobotSkin/TightropeCast2")
 blocked_cast = NodePath("../../RayCast3D")
 
 [node name="CoyoteTimer" type="Timer" parent="MovementStateMachine/Airborne"]
@@ -88,14 +129,19 @@ process_callback = 0
 wait_time = 0.1
 one_shot = true
 
-[node name="DoubleJumpBufferTimer" type="Timer" parent="MovementStateMachine/Airborne"]
+[node name="DoubleJumpDelayTimer" type="Timer" parent="MovementStateMachine/Airborne"]
 process_callback = 0
-wait_time = 0.05
+wait_time = 0.025
 one_shot = true
 
 [node name="ClimbBufferTimer" type="Timer" parent="MovementStateMachine/Airborne"]
 process_callback = 0
 wait_time = 0.1
+one_shot = true
+
+[node name="WallJumpDelayTimer" type="Timer" parent="MovementStateMachine/Airborne"]
+process_callback = 0
+wait_time = 0.25
 one_shot = true
 
 [node name="GrappleSwing" type="Node" parent="MovementStateMachine" node_paths=PackedStringArray("grappling_hook")]
@@ -122,6 +168,13 @@ script = ExtResource("10_huei1")
 [node name="TightRopeWalk" type="Node" parent="MovementStateMachine"]
 script = ExtResource("11_b876p")
 
+[node name="WallSlide" type="Node" parent="MovementStateMachine"]
+script = ExtResource("12_vdvl1")
+SLIDE_TIME = 2.0
+
+[node name="EdgeGrab" type="Node" parent="MovementStateMachine"]
+script = ExtResource("13_q7isu")
+
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("4_ahg3t")
 initial_state = NodePath("Look")
@@ -131,42 +184,61 @@ script = ExtResource("12_rw07x")
 
 [node name="Aim" type="Node" parent="StateMachine" node_paths=PackedStringArray("bow")]
 script = ExtResource("12_q73os")
-bow = NodePath("../../MeshRig/Bow")
+bow = NodePath("../../GobotSkin/Bow")
 
-[node name="MeshRig" type="Node3D" parent="."]
+[node name="GobotSkin" parent="." instance=ExtResource("18_vl1bs")]
 
-[node name="Body" type="MeshInstance3D" parent="MeshRig"]
-mesh = SubResource("CapsuleMesh_ipvyw")
-
-[node name="Glasses" type="MeshInstance3D" parent="MeshRig"]
-transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.441, -0.306)
-mesh = SubResource("BoxMesh_5t44h")
-surface_material_override/0 = SubResource("StandardMaterial3D_5rniw")
-
-[node name="Bow" parent="MeshRig" node_paths=PackedStringArray("player") instance=ExtResource("15_u52cg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.669221, 0, -0.399918)
+[node name="Bow" parent="GobotSkin" node_paths=PackedStringArray("player") instance=ExtResource("15_u52cg")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -0.669221, 0, 0.399918)
 player = NodePath("../..")
 
-[node name="SpireCast" type="ShapeCast3D" parent="MeshRig"]
+[node name="SpireCast" type="ShapeCast3D" parent="GobotSkin"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, -3)
 shape = SubResource("CylinderShape3D_636k3")
 target_position = Vector3(0, 0, 0)
 collision_mask = 4
 collide_with_areas = true
 
-[node name="TightropeCast" type="ShapeCast3D" parent="MeshRig"]
+[node name="TightropeCast" type="ShapeCast3D" parent="GobotSkin"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
 shape = SubResource("CylinderShape3D_0wf52")
 target_position = Vector3(0, 0, -5.5)
 collision_mask = 8
 collide_with_areas = true
 
-[node name="TightropeCast2" type="ShapeCast3D" parent="MeshRig"]
+[node name="TightropeCast2" type="ShapeCast3D" parent="GobotSkin"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, -5.5)
 shape = SubResource("CylinderShape3D_0wf52")
 target_position = Vector3(0, 0, 0)
 collision_mask = 8
 collide_with_areas = true
+
+[node name="EdgeRayCast" type="RayCast3D" parent="GobotSkin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+target_position = Vector3(0, 0, -1)
+hit_back_faces = false
+
+[node name="EdgeRayCast2" type="RayCast3D" parent="GobotSkin"]
+target_position = Vector3(0, 0, -0.8)
+hit_back_faces = false
+
+[node name="BounceRaycast" type="RayCast3D" parent="GobotSkin"]
+target_position = Vector3(0, -1.2, 0)
+hit_back_faces = false
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="MeshRig" type="Node3D" parent="."]
+visible = false
+
+[node name="Body" type="MeshInstance3D" parent="MeshRig"]
+mesh = SubResource("CapsuleMesh_ipvyw")
+surface_material_override/0 = SubResource("ShaderMaterial_ooll0")
+
+[node name="Glasses" type="MeshInstance3D" parent="MeshRig"]
+transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.441, -0.306)
+mesh = SubResource("BoxMesh_5t44h")
+surface_material_override/0 = SubResource("StandardMaterial3D_5rniw")
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 active = false
@@ -210,7 +282,9 @@ target_position = Vector3(0, 0, 0)
 collision_mask = 13
 
 [connection signal="timeout" from="MovementStateMachine/Airborne/CoyoteTimer" to="MovementStateMachine/Airborne" method="_on_coyote_timer_timeout"]
-[connection signal="timeout" from="MovementStateMachine/Airborne/DoubleJumpBufferTimer" to="MovementStateMachine/Airborne" method="_on_double_jump_buffer_timer_timeout"]
+[connection signal="timeout" from="MovementStateMachine/Airborne/DoubleJumpDelayTimer" to="MovementStateMachine/Airborne" method="_on_double_jump_buffer_timer_timeout"]
 [connection signal="timeout" from="MovementStateMachine/Airborne/ClimbBufferTimer" to="MovementStateMachine/Airborne" method="_on_climb_buffer_timer_timeout"]
+[connection signal="timeout" from="MovementStateMachine/Airborne/WallJumpDelayTimer" to="MovementStateMachine/Airborne" method="_on_wall_jump_delay_timer_timeout"]
+[connection signal="timeout" from="MovementStateMachine/Airborne/WallJumpDelayTimer" to="MovementStateMachine/Airborne" method="_on_coyote_timer_timeout"]
 [connection signal="set_camera_rotation" from="PlayerCamera3D" to="." method="_on_set_camera_rotation"]
 [connection signal="hook_engaged" from="GrapplingHook" to="MovementStateMachine/Airborne" method="_handle_hook_engaged"]

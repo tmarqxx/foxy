@@ -1,0 +1,41 @@
+[gd_resource type="VisualShader" load_steps=5 format=3 uid="uid://cge5me2cuwh5t"]
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_qgwu1"]
+parameter_name = "base_color"
+default_value_enabled = true
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_nbahq"]
+parameter_name = "shade_color"
+default_value_enabled = true
+default_value = Color(0, 0, 0, 1)
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_nu8lc"]
+parameter_name = "shade_threshold"
+hint = 2
+min = -1.0
+step = 0.001
+default_value_enabled = true
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_tf7cq"]
+parameter_name = "shade_softness"
+hint = 2
+step = 0.001
+default_value_enabled = true
+default_value = 0.01
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+
+
+"
+nodes/fragment/0/position = Vector2(1000, 0)
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorParameter_qgwu1")
+nodes/fragment/2/position = Vector2(-2.54715, 1.085)
+nodes/fragment/3/node = SubResource("VisualShaderNodeColorParameter_nbahq")
+nodes/fragment/3/position = Vector2(0.673877, 213.969)
+nodes/fragment/4/node = SubResource("VisualShaderNodeFloatParameter_nu8lc")
+nodes/fragment/4/position = Vector2(0.183866, 415.672)
+nodes/fragment/5/node = SubResource("VisualShaderNodeFloatParameter_tf7cq")
+nodes/fragment/5/position = Vector2(511.701, 597.893)

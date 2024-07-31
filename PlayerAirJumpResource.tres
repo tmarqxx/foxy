@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="JumpData" load_steps=2 format=3 uid="uid://b3raq0mlj8wpr"]
+
+[ext_resource type="Script" path="res://custom_resources/jump_data.gd" id="1_q7xuf"]
+
+[resource]
+script = ExtResource("1_q7xuf")
+height = 1.0
+time_to_peak = 0.2
+time_to_fall = 0.0

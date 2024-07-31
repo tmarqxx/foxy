@@ -1,6 +1,7 @@
 extends PlayerState
 
 func enter(payload: Dictionary = {}):
+	player.skin.idle()
 	player.camera.release_platform_snap()
 	player.velocity = Vector3.ZERO
 

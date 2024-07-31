@@ -52,13 +52,13 @@ var platform_snap_position : Vector3 = Vector3.ZERO
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	spring_arm.add_excluded_object(subject.get_rid())
+	#spring_arm.add_excluded_object(subject.get_rid())
 	pitch = default_pitch
 	pitch_pivot.rotation_degrees.x = default_pitch
 	
 	top_level = true
 	
-	camera.position = camera_offset
+	camera.global_position = camera_offset
 
 
 func _input(event):
@@ -84,8 +84,8 @@ func _physics_process(delta):
 	
 	var target = subject_position + position_offset + subject_offset
 	
-	global_position.x = lerp(global_position.x, target.x, 50 * delta)
-	global_position.z = lerp(global_position.z, target.z, 50 * delta)
+	global_position.x = lerp(global_position.x, target.x, 5 * delta)
+	global_position.z = lerp(global_position.z, target.z, 5 * delta)
 	global_position.y = lerp(global_position.y, target.y, 10 * delta)
 	
 	pitch = clamp(pitch, -40, 60)

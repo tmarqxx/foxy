@@ -1,25 +1,31 @@
 [gd_scene load_steps=4 format=3 uid="uid://w0yjpb86tnt7"]
 
-[ext_resource type="Script" path="res://scripts/TightropePath.gd" id="1_qykor"]
-[ext_resource type="Script" path="res://scripts/TightropePolygon3D.gd" id="2_fd0i4"]
+[ext_resource type="Script" path="res://custom_nodes/tightrope_path_3d.gd" id="1_fp5db"]
 
-[sub_resource type="Curve3D" id="Curve3D_76cfd"]
+[sub_resource type="Curve3D" id="Curve3D_lcdbj"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -23.3797, 2.69262, 3.8147e-06),
+"tilts": PackedFloat32Array(0)
+}
+point_count = 1
 
-[node name="TightRopePath" type="Path3D"]
-curve = SubResource("Curve3D_76cfd")
-script = ExtResource("1_qykor")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b322p"]
+
+[node name="Path3D" type="Path3D"]
+curve = SubResource("Curve3D_lcdbj")
+script = ExtResource("1_fp5db")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.999999, 36.7918, 8.17505, 25.6049)
-v_offset = 1.0
+v_offset = 0.1
 rotation_mode = 0
 loop = false
 
 [node name="RemoteTransform3D" type="RemoteTransform3D" parent="PathFollow3D"]
+remote_path = NodePath("../../TargetNode3D")
 
-[node name="CSGPolygon3D" type="CSGPolygon3D" parent="."]
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="." groups=["TightRopeTarget"]]
 use_collision = true
-collision_layer = 8
+collision_layer = 8192
 collision_mask = 0
 polygon = PackedVector2Array()
 mode = 2
@@ -32,7 +38,6 @@ path_local = false
 path_continuous_u = true
 path_u_distance = 1.0
 path_joined = false
-smooth_faces = true
-script = ExtResource("2_fd0i4")
-number_of_vertices = 5
-radius = 0.1
+material = SubResource("StandardMaterial3D_b322p")
+
+[node name="TargetNode3D" type="Node3D" parent="."]

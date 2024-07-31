@@ -1,0 +1,93 @@
+[gd_scene load_steps=19 format=3 uid="uid://ejy5djb63t1w"]
+
+[ext_resource type="Script" path="res://scripts/player/NewPlayer.gd" id="1_qjf7q"]
+[ext_resource type="Shape3D" uid="uid://b3a70kdlwf73i" path="res://resources/PlayerStandingCollisionShape.tres" id="3_aib77"]
+[ext_resource type="Shader" path="res://assets/shaders/cel2.gdshader" id="4_4o26j"]
+[ext_resource type="PackedScene" uid="uid://c5k4lj0apt517" path="res://scenes/PlayerCamera3D.tscn" id="5_5mphl"]
+[ext_resource type="Script" path="res://scripts/StateMachine.gd" id="6_ejiye"]
+[ext_resource type="Script" path="res://Grounded2.gd" id="7_nu7on"]
+[ext_resource type="Script" path="res://Airborne2.gd" id="8_5o6ae"]
+
+[sub_resource type="Resource" id="Resource_kaq08"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_8xr77"]
+
+[sub_resource type="Gradient" id="Gradient_167pq"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.5)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_s33s7"]
+gradient = SubResource("Gradient_167pq")
+
+[sub_resource type="Gradient" id="Gradient_ys8m6"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.5)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_bumsw"]
+gradient = SubResource("Gradient_ys8m6")
+
+[sub_resource type="Gradient" id="Gradient_x8d7v"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.2)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6dfvy"]
+gradient = SubResource("Gradient_x8d7v")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bwv33"]
+render_priority = 0
+shader = ExtResource("4_4o26j")
+shader_parameter/albedo = Color(0.622196, 0.184308, 0.0901364, 1)
+shader_parameter/color_gradient = SubResource("GradientTexture1D_s33s7")
+shader_parameter/fresnel_gradient = SubResource("GradientTexture1D_bumsw")
+shader_parameter/rim_gradient = SubResource("GradientTexture1D_6dfvy")
+
+[sub_resource type="BoxMesh" id="BoxMesh_inw4w"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1outi"]
+albedo_color = Color(0.0383972, 0.0383972, 0.0383972, 1)
+
+[node name="CharacterBody3D" type="CharacterBody3D"]
+axis_lock_angular_x = true
+axis_lock_angular_z = true
+script = ExtResource("1_qjf7q")
+air_acceleration_time = 5.0
+air_deceleration_time = 0.2
+max_air_speed = 8.0
+basic_jump = SubResource("Resource_kaq08")
+
+[node name="StandingCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = ExtResource("3_aib77")
+
+[node name="RayCast3D" type="RayCast3D" parent="StandingCollision"]
+target_position = Vector3(0, 1, 0)
+
+[node name="MeshRig" type="Node3D" parent="StandingCollision"]
+
+[node name="Body" type="MeshInstance3D" parent="StandingCollision/MeshRig"]
+mesh = SubResource("CapsuleMesh_8xr77")
+surface_material_override/0 = SubResource("ShaderMaterial_bwv33")
+
+[node name="Glasses" type="MeshInstance3D" parent="StandingCollision/MeshRig"]
+transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.441, -0.306)
+mesh = SubResource("BoxMesh_inw4w")
+surface_material_override/0 = SubResource("StandardMaterial3D_1outi")
+
+[node name="PlayerCamera3D" parent="." node_paths=PackedStringArray("subject") instance=ExtResource("5_5mphl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 2)
+subject = NodePath("../CameraFollowTarget")
+camera_offset = Vector3(0, 1.5, 0)
+
+[node name="CameraFollowTarget" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1)
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("6_ejiye")
+initial_state = NodePath("Grounded")
+
+[node name="Grounded" type="Node" parent="StateMachine"]
+script = ExtResource("7_nu7on")
+
+[node name="Airborne" type="Node" parent="StateMachine"]
+script = ExtResource("8_5o6ae")

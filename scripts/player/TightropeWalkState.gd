@@ -21,6 +21,7 @@ func handle_input(event):
 
 func physics_update(delta):
 	if not player.is_moving():
+		player.skin.idle()
 		return
 	
 	var tightrope_direction = tightrope_node.get_tightrope_direction()
@@ -35,6 +36,7 @@ func physics_update(delta):
 	var new_up_vector = tightrope_node.get_up_vector()
 	player.orient_toward(delta, progress_scalar * tightrope_direction)
 	player.set_up_vector(new_up_vector)
+	player.skin.run()
 
 func _get_progress_scalar(direction: Vector3, threshold: float = 0.0) -> int:
 	direction.y = 0

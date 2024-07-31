@@ -2,6 +2,7 @@ class_name SprintState
 extends PlayerState
 
 func enter(_payload: Dictionary = {}):
+	player.skin.run()
 	player.camera.release_platform_snap()
 
 func handle_input(event):

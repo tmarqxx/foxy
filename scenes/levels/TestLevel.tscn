@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://520xbgpf8kw3"]
+[gd_scene load_steps=19 format=3 uid="uid://520xbgpf8kw3"]
 
 [ext_resource type="PackedScene" uid="uid://b0wusw0376pts" path="res://scenes/Platform.tscn" id="1_ohtn0"]
 [ext_resource type="PackedScene" uid="uid://clf42cotd1gl7" path="res://scenes/Player.tscn" id="2_0ngau"]
@@ -13,7 +13,7 @@ offsets = PackedFloat32Array(0.163934, 1)
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_h0ktl"]
 frequency = 0.0092
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_64e5w"]
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_j5f8a"]
 height = 256
 seamless = true
 color_ramp = SubResource("Gradient_buo6s")
@@ -22,29 +22,46 @@ noise = SubResource("FastNoiseLite_h0ktl")
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hjux7"]
 sky_top_color = Color(0.284315, 0.529143, 0.846841, 1)
 sky_horizon_color = Color(0.693369, 0.820787, 0.951173, 1)
-sky_cover = SubResource("NoiseTexture2D_64e5w")
+sky_cover = SubResource("NoiseTexture2D_j5f8a")
 
-[sub_resource type="Sky" id="Sky_0y6t0"]
+[sub_resource type="Sky" id="Sky_sjl5a"]
 sky_material = SubResource("ProceduralSkyMaterial_hjux7")
 
 [sub_resource type="Environment" id="Environment_wm8h4"]
 background_mode = 2
-sky = SubResource("Sky_0y6t0")
-ambient_light_color = Color(0.977937, 0.977937, 0.977937, 1)
+sky = SubResource("Sky_sjl5a")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.01
 
-[sub_resource type="Curve3D" id="Curve3D_hhlh6"]
+[sub_resource type="Curve3D" id="Curve3D_rjksw"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, -2.15978, -1.54971, -10.5544, 36.7096, 7.17505, 23.14, 2.16246, -0.881277, 10.5675, 0, 0, 0, 28.0634, 5.83739, -19.1121),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
 
-[sub_resource type="Curve3D" id="Curve3D_mwubh"]
+[sub_resource type="Curve3D" id="Curve3D_v2d6a"]
 _data = {
 "points": PackedVector3Array(0, 0, 0, -5.92548, -3.01727, -3.45587, 33.0941, 7.17505, 23.14, 5.98829, 0.75118, 3.4925, 0, 0, 0, 9.26279, -0.366051, 9.24105),
 "tilts": PackedFloat32Array(0, 0)
 }
 point_count = 2
+
+[sub_resource type="SphereMesh" id="SphereMesh_ngnk8"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_joqol"]
+albedo_color = Color(0.893742, 0.815346, 0, 1)
+emission_enabled = true
+emission = Color(0.893742, 0.815346, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3lq88"]
+top_radius = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dwgl1"]
+albedo_color = Color(0.893742, 0.815346, 0, 1)
+emission_enabled = true
+emission = Color(0.893742, 0.815346, 0, 1)
 
 [node name="TestLevel" type="Node3D"]
 
@@ -53,6 +70,7 @@ environment = SubResource("Environment_wm8h4")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.939693, -0.219846, 0.262003, 0, 0.766044, 0.642788, -0.34202, -0.604023, 0.719846, 0, 0, 0)
+light_energy = 0.01
 shadow_enabled = true
 
 [node name="Platforms" type="Node" parent="."]
@@ -98,7 +116,7 @@ collision_node = NodePath("../Platform/CollisionShape3D")
 size = Vector3(20, 0.5, 20)
 
 [node name="Player" parent="." instance=ExtResource("2_0ngau")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 3.39209, 1.86384, -4.21287)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 11.5855, 3.40802, -19.5111)
 
 [node name="GrappleHookPoint" parent="." instance=ExtResource("3_ie23a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5087, 7.51711, 12.2552)
@@ -118,10 +136,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5083, -3.18838, 25.9834)
 [node name="SpireJumpTarget4" parent="." instance=ExtResource("4_lglqc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.9265, -3.18838, 27.6475)
 
-[node name="TightRopePath" parent="." node_paths=PackedStringArray("node_a", "node_b") instance=ExtResource("5_d4pbn")]
-curve = SubResource("Curve3D_hhlh6")
-node_a = NodePath("TightRopeAnchor")
-node_b = NodePath("TightRopeAnchor2")
+[node name="TightRopePath" parent="." instance=ExtResource("5_d4pbn")]
+curve = SubResource("Curve3D_rjksw")
 
 [node name="TightRopeAnchor" parent="TightRopePath" instance=ExtResource("6_obmcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.7096, 7.17505, 23.14)
@@ -129,13 +145,40 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.7096, 7.17505, 23.14)
 [node name="TightRopeAnchor2" parent="TightRopePath" instance=ExtResource("6_obmcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.0634, 5.83739, -19.1121)
 
-[node name="TightRopePath2" parent="." node_paths=PackedStringArray("node_a", "node_b") instance=ExtResource("5_d4pbn")]
-curve = SubResource("Curve3D_mwubh")
-node_a = NodePath("TightRopeAnchor")
-node_b = NodePath("TightRopeAnchor2")
+[node name="TightRopePath2" parent="." instance=ExtResource("5_d4pbn")]
+curve = SubResource("Curve3D_v2d6a")
 
 [node name="TightRopeAnchor" parent="TightRopePath2" instance=ExtResource("6_obmcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.0941, 7.17505, 23.14)
 
 [node name="TightRopeAnchor2" parent="TightRopePath2" instance=ExtResource("6_obmcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.26279, -0.366051, 9.24105)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.13483, 7.84896, -7.65772)
+light_color = Color(0.893742, 0.815346, 0, 1)
+light_energy = 5.0
+shadow_enabled = true
+omni_range = 10.0
+omni_attenuation = 0.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="OmniLight3D"]
+cast_shadow = 0
+mesh = SubResource("SphereMesh_ngnk8")
+surface_material_override/0 = SubResource("StandardMaterial3D_joqol")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(-0.731838, -0.623046, -0.276092, -0.601872, 0.400909, 0.690668, -0.319631, 0.671629, -0.668394, 10.8474, 8.82428, -28.3191)
+light_color = Color(0.893742, 0.815346, 0, 1)
+light_energy = 5.0
+light_indirect_energy = 0.0
+shadow_enabled = true
+spot_range = 20.0
+spot_attenuation = 0.0
+spot_angle = 30.0
+spot_angle_attenuation = 0.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SpotLight3D"]
+transform = Transform3D(1, 0, 0, 0, 1.19249e-08, -1, 0, 1, 1.19249e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_3lq88")
+surface_material_override/0 = SubResource("StandardMaterial3D_dwgl1")

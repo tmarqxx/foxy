@@ -1,0 +1,235 @@
+[gd_scene load_steps=35 format=3 uid="uid://cmh24lqvlyo45"]
+
+[ext_resource type="Script" path="res://custom_nodes/playerrr.gd" id="1_nkopl"]
+[ext_resource type="Script" path="res://scripts/StateMachine.gd" id="1_yk72j"]
+[ext_resource type="Script" path="res://player_grounded_state.gd" id="3_kynb8"]
+[ext_resource type="Script" path="res://custom_resources/speed_data.gd" id="4_ijmlj"]
+[ext_resource type="Script" path="res://player_airborne_state.gd" id="5_md1lr"]
+[ext_resource type="Resource" uid="uid://cb4qj0v2jc0c1" path="res://PlayerGroundJumpResource.tres" id="6_yoiee"]
+[ext_resource type="Script" path="res://custom_resources/jump_data.gd" id="7_7drjo"]
+[ext_resource type="Resource" uid="uid://b3raq0mlj8wpr" path="res://PlayerAirJumpResource.tres" id="7_83pse"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="7_d72x0"]
+[ext_resource type="Script" path="res://player_wall_jump_state.gd" id="8_2lcug"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="8_5wpd7"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="9_20ee2"]
+[ext_resource type="Script" path="res://player_wall_slide_state.gd" id="9_iqf7e"]
+[ext_resource type="Script" path="res://player_spire_jump_state.gd" id="11_a3fqe"]
+[ext_resource type="Script" path="res://player_spire_perch_state.gd" id="12_u635d"]
+[ext_resource type="Script" path="res://player_tight_rope_walk_state.gd" id="13_oil1q"]
+[ext_resource type="Script" path="res://custom_nodes/spire_jump_component.gd" id="13_yr6xm"]
+
+[sub_resource type="Resource" id="Resource_ijr03"]
+script = ExtResource("4_ijmlj")
+max_speed = 6.0
+time_to_max_speed = 0.01
+time_to_stop = 0.01
+
+[sub_resource type="Resource" id="Resource_0udyg"]
+script = ExtResource("4_ijmlj")
+max_speed = 7.0
+time_to_max_speed = 0.6
+time_to_stop = 0.3
+
+[sub_resource type="Curve" id="Curve_vyu20"]
+_data = [Vector2(0, 0), 0.0, 2.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+metadata/_snap_enabled = true
+
+[sub_resource type="Resource" id="Resource_arhgu"]
+script = ExtResource("4_ijmlj")
+max_speed = 12.0
+time_to_max_speed = 0.0
+time_to_stop = 0.0
+
+[sub_resource type="Resource" id="Resource_05xrq"]
+script = ExtResource("7_7drjo")
+height = 1.0
+time_to_peak = 0.3
+time_to_fall = 0.0
+
+[sub_resource type="Resource" id="Resource_v48u4"]
+script = ExtResource("4_ijmlj")
+max_speed = 12.0
+time_to_max_speed = 1.0
+time_to_stop = 0.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3dkv1"]
+height = 1.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_cqbkx"]
+height = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_2pd3n"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r02bb"]
+albedo_color = Color(0.0383972, 0.0383972, 0.0383972, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_uvipp"]
+radius = 0.25
+
+[sub_resource type="Resource" id="Resource_6pee4"]
+script = ExtResource("8_5wpd7")
+duration = 1.0
+transition = 0
+ease = 2
+
+[sub_resource type="Resource" id="Resource_qd7iy"]
+script = ExtResource("9_20ee2")
+cull_mask = 1048575
+h_offset = 0.0
+v_offset = 0.0
+projection = 0
+fov = 75.0
+size = 1.0
+frustum_offset = Vector2(0, 0)
+near = 0.05
+far = 4000.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_n1cue"]
+radius = 0.25
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ooqv5"]
+height = 16.0
+radius = 3.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_x41e6"]
+height = 16.0
+radius = 3.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0ii6c"]
+height = 16.0
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 16
+collision_mask = 3
+script = ExtResource("1_nkopl")
+
+[node name="MovementStateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("1_yk72j")
+initial_state = NodePath("GroundedState")
+
+[node name="GroundedState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("3_kynb8")
+ground_speed = SubResource("Resource_ijr03")
+
+[node name="AirborneState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("5_md1lr")
+air_speed = SubResource("Resource_0udyg")
+ground_jump = ExtResource("6_yoiee")
+air_jump = ExtResource("7_83pse")
+jump_curve = SubResource("Curve_vyu20")
+
+[node name="WallJumpState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("8_2lcug")
+speed = SubResource("Resource_arhgu")
+wall_jump = SubResource("Resource_05xrq")
+
+[node name="WallSlideState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("9_iqf7e")
+wall_speed = SubResource("Resource_v48u4")
+hang_time = 0.2
+
+[node name="SpireJumpState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("11_a3fqe")
+
+[node name="SpirePerchState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("12_u635d")
+
+[node name="TightRopeWalkState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("13_oil1q")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CapsuleShape3D_3dkv1")
+
+[node name="PlayerSkin" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Body" type="MeshInstance3D" parent="PlayerSkin"]
+mesh = SubResource("CapsuleMesh_cqbkx")
+
+[node name="Glasses" type="MeshInstance3D" parent="PlayerSkin"]
+transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.213034, -0.306)
+mesh = SubResource("BoxMesh_2pd3n")
+surface_material_override/0 = SubResource("StandardMaterial3D_r02bb")
+
+[node name="CameraCenterTarget" type="Node3D" parent="PlayerSkin"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="PlayerSkin/CameraCenterTarget"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+shape = SubResource("SphereShape3D_uvipp")
+
+[node name="CameraForwardTarget" type="Node3D" parent="PlayerSkin/CameraCenterTarget/SpringArm3D"]
+unique_name_in_owner = true
+
+[node name="PlayerPhantomCamera3D" type="Node3D" parent="." node_paths=PackedStringArray("follow_target", "look_at_target")]
+unique_name_in_owner = true
+transform = Transform3D(-0.99999, 0, 0, 0, 0.894427, 0.447212, 0, 0.447214, -0.894423, 0, 4.23606, -4.47212)
+script = ExtResource("7_d72x0")
+follow_mode = 6
+follow_target = NodePath("../CameraFollowTarget")
+look_at_target = NodePath("../PlayerSkin")
+tween_resource = SubResource("Resource_6pee4")
+tween_on_load = false
+camera_3d_resource = SubResource("Resource_qd7iy")
+follow_damping = true
+follow_damping_value = Vector3(0, 0.25, 0)
+follow_distance = 5.0
+dead_zone_width = 0.2
+dead_zone_height = 0.8
+spring_length = 5.0
+shape = SubResource("SphereShape3D_n1cue")
+
+[node name="CameraFollowTarget" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2, 0)
+
+[node name="SpireJumpComponent" type="Node3D" parent="." node_paths=PackedStringArray("surrounding_cast", "directional_cast", "fine_cast", "blocked_raycast")]
+unique_name_in_owner = true
+script = ExtResource("13_yr6xm")
+collision_buffer_time = 0.1
+surrounding_cast = NodePath("SurroundingShapeCast3D")
+directional_cast = NodePath("DirectionalShapeCast3D")
+fine_cast = NodePath("FineShapeCast3D")
+blocked_raycast = NodePath("BlockedRayCast3D")
+radius = 5.0
+
+[node name="SurroundingShapeCast3D" type="ShapeCast3D" parent="SpireJumpComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
+enabled = false
+shape = SubResource("CylinderShape3D_ooqv5")
+target_position = Vector3(0, 0, 0)
+max_results = 3
+collision_mask = 12288
+collide_with_areas = true
+
+[node name="DirectionalShapeCast3D" type="ShapeCast3D" parent="SpireJumpComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
+enabled = false
+shape = SubResource("CylinderShape3D_x41e6")
+target_position = Vector3(0, 0, 0)
+max_results = 3
+collision_mask = 12288
+collide_with_areas = true
+
+[node name="FineShapeCast3D" type="ShapeCast3D" parent="SpireJumpComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
+enabled = false
+shape = SubResource("CylinderShape3D_0ii6c")
+target_position = Vector3(0, 0, -5)
+max_results = 3
+collision_mask = 12288
+collide_with_areas = true
+
+[node name="BlockedRayCast3D" type="RayCast3D" parent="SpireJumpComponent"]
+enabled = false
+target_position = Vector3(0, 0, 0)
+collide_with_areas = true
+
+[node name="FloorRayCast3D" type="RayCast3D" parent="."]
+unique_name_in_owner = true
+target_position = Vector3(0, -0.5, 0)
+collide_with_areas = true

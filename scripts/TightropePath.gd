@@ -1,6 +1,6 @@
 @tool
 
-class_name TightropePath
+class_name DepTightropePath
 extends Path3D
 
 @export var node_a : Node3D
@@ -48,9 +48,7 @@ func get_tightrope_direction() -> Vector3:
 func set_remote_transform_path(path: NodePath) -> void:
 	remote_transform.set_remote_node(path)
 
-func set_path_progress_from_position(position: Vector3) -> void:
-	var start = curve.get_point_position(0)
-	
+func set_path_progress_from_position(position: Vector3) -> void:	
 	var offset = curve.get_closest_offset(position)
 	path_follow.set_progress(clamp(offset, 1.0, curve.get_baked_length() - 1.0))
 
