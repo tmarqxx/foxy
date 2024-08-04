@@ -1,27 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://c6fxthcq07sow"]
-
-[ext_resource type="Script" path="res://scripts/GrappleSwingTarget.gd" id="1_pehlo"]
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_slxpa"]
-radius = 16.0
+[gd_scene load_steps=4 format=3 uid="uid://c6fxthcq07sow"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kmny2"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_hnr3s"]
 
-[node name="GrappleSwingTarget" type="Area3D"]
-collision_layer = 2
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gnh5t"]
+albedo_color = Color(0.1, 0.0893333, 0.02, 1)
+
+[node name="GrappleSwingTarget" type="StaticBody3D"]
+collision_layer = 16384
 collision_mask = 0
-script = ExtResource("1_pehlo")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("SphereShape3D_slxpa")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." groups=["GrappleSwingTarget"]]
 shape = SubResource("SphereShape3D_kmny2")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_hnr3s")
 skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_gnh5t")

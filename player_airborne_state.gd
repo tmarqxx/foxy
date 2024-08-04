@@ -9,6 +9,7 @@ var double_jump: JumpData = JumpData.new()
 @export var jump_curve = Curve.new()
 
 @onready var spire_jump_component: SpireJumpComponent = %SpireJumpComponent
+@onready var grapple_hook_component: GrappleHookComponent = %GrappleHookComponent
 
 var target_jump_height: Vector3 = Vector3.ZERO
 var entered_at: float
@@ -28,6 +29,15 @@ var jump_gravity: float = ground_jump.gravity
 var is_ground_jump_buffered: bool = false
 var is_air_jump_buffered: bool = false
 var is_jump_buffered: bool = false
+var is_climb_buffered: bool = false
+#var is_wall_slide_buffered: bool = false
+var is_grapple_buffered: bool = false
+
+var ground_jump_buffer_time: float = 0.0
+var jump_buffer_time: float = 0.0
+var climb_buffer_time: float = 0.0
+var grapple_buffer_time: float = 0.0
+
 var is_air_jump_available: bool = true
 
 var current_payload: Dictionary
@@ -35,6 +45,7 @@ var current_payload: Dictionary
 func enter(payload: Dictionary = {}):
 	is_air_jump_buffered = false
 	spire_jump_component.set_enabled(true)
+	grapple_hook_component.set_enabled(true)
 	
 	if payload.get("ground_jump") == true:
 		print("GROUND_JUMP")
@@ -109,9 +120,12 @@ func exit():
 	jump_direction = Vector3.ZERO
 	jump_peak_time = 0.0
 	spire_jump_component.set_enabled(false)
+	grapple_hook_component.set_enabled(false)
 
 
 func handle_input(event: InputEvent):
+	var current_time := Time.get_unix_time_from_system()
+	
 	if event.is_action_pressed("jump") and not player.is_on_floor():
 		if coyote_time < coyote_time_limit:
 			enter({ "ground_jump": true })
@@ -120,13 +134,19 @@ func handle_input(event: InputEvent):
 		else:
 			is_air_jump_buffered = true
 	
-	if event.is_action_pressed("climb"):
-		var target: SpireJumpTarget = spire_jump_component.request_target()
-
-		if target == null:
-			return
-		
-		transition_to.emit(self, "SpireJumpState", { "target": target })
+	elif event.is_action_pressed("climb"):
+		is_climb_buffered = true
+		climb_buffer_time = current_time + 0.1
+	
+	elif event.is_action_pressed("grapple"):
+		is_grapple_buffered = true
+		grapple_buffer_time = current_time + 0.1
+	
+	#elif event.is_action_pressed("grapple"):
+		#if not grapple_hook_component.can_swing():
+			#return
+		#
+		#transition_to.emit(self, "GrappleSwingState")
 
 
 func update(delta):
@@ -147,13 +167,14 @@ func physics_update(delta) -> void:
 		transition_to.emit(self, "GroundedState")
 		return
 	
+	#_handle_jump_buffer()
+	_handle_climb_buffer()
+	_handle_grapple_buffer()
+	
 	var direction = player.get_movement_direction()
 	spire_jump_component.set_target_direction(player.velocity)
+	grapple_hook_component.set_target_direction(player.velocity)
 	
-	if player.is_on_wall_only() and player.get_wall_normal().dot(direction) < -0.5:
-		transition_to.emit(self, "WallSlideState")
-		return
-		
 	
 	jump_time += delta
 	coyote_time += delta
@@ -179,6 +200,56 @@ func physics_update(delta) -> void:
 	
 	
 	#player.apply_acceleration(direction, air_speed.acceleration_rate, air_speed.deceleration_rate, air_speed.max_speed, delta)
+
+func _handle_jump_buffer() -> void:
+	if Time.get_unix_time_from_system() > climb_buffer_time:
+		is_jump_buffered = false
+	
+	if player.is_on_trampoline() and is_jump_buffered:
+		is_jump_buffered = false
+		enter({ "trampoline_jump": true, "bounciness": player.get_trampoline_collider().bounciness })
+	elif player.is_on_trampoline() or (player.is_on_floor() and is_jump_buffered):
+		is_jump_buffered = false
+		enter({ "ground_jump": true })
+	elif not player.is_on_floor() and is_jump_buffered:
+		is_jump_buffered = false
+		enter({ "air_jump": true })
+	elif player.is_on_floor():
+		is_jump_buffered = false
+		is_air_jump_available = true
+		transition_to.emit(self, "GroundedState")
+
+func _handle_climb_buffer() -> void:
+	if Time.get_unix_time_from_system() > climb_buffer_time:
+		is_climb_buffered = false
+		return
+	
+	if not is_climb_buffered:
+		return
+	
+	var target: SpireJumpTarget = spire_jump_component.request_target()
+	
+	if target == null:
+		return
+	
+	transition_to.emit(self, "SpireJumpState", { "target": target })
+
+func _handle_grapple_buffer() -> void:
+	if Time.get_unix_time_from_system() > grapple_buffer_time:
+		is_grapple_buffered = false
+		return
+		
+	if not is_grapple_buffered:
+		return
+	
+	if player.is_on_wall_only():
+		transition_to.emit(self, "WallSlideState")
+	elif grapple_hook_component.can_swing():
+		transition_to.emit(self, "GrappleSwingState")
+		
+
+func _handle_grapple_swing_buffer() -> void:
+	pass
 
 func _apply_input_direction(_delta: float) -> void:
 	var direction = player.get_movement_direction()

@@ -10,7 +10,8 @@ class_name SpireJumpComponent
 @export var directional_cast: ShapeCast3D
 @export var fine_cast: ShapeCast3D
 @export var blocked_raycast: RayCast3D
-@export var target_direction: Vector3 = Vector3.ZERO
+@export var target_direction: Vector3 = Vector3.ZERO:
+	set = set_target_direction
 @export_range(1.0, 10.0) var radius: float = 1.0
 
 func _ready() -> void:
@@ -18,7 +19,6 @@ func _ready() -> void:
 	surrounding_cast.set_max_results(3)
 	directional_cast.set_max_results(3)
 	fine_cast.set_max_results(3)
-
 
 func request_target() -> SpireJumpTarget:
 	var target: SpireJumpTarget = null
@@ -29,16 +29,6 @@ func request_target() -> SpireJumpTarget:
 		target = _get_target(directional_cast)
 	elif _has_target(surrounding_cast):
 		target = _get_target(surrounding_cast)
-	
-	#if target_cache.has(fine_cast.get_instance_id()):
-		#target = target_cache.get(fine_cast.get_instance_id()).get("collider")
-	#elif target_cache.has(directional_cast.get_instance_id()):
-		#target = target_cache.get(directional_cast.get_instance_id()).get("collider")
-	#elif target_cache.has(surrounding_cast.get_instance_id()):
-		#target = target_cache.get(surrounding_cast.get_instance_id()).get("collider")
-	
-	if _is_blocked(target):
-		return null
 	
 	return target
 
@@ -62,7 +52,23 @@ func _has_target(cast: ShapeCast3D) -> bool:
 	
 	cast.force_shapecast_update()
 	
-	return cast.is_colliding()
+	var is_colliding = cast.is_colliding()
+	
+	if not is_colliding:
+		return false
+	
+	var collider = cast.get_collider(0)
+	var is_blocked := true
+	
+	if collider.is_in_group("SpirePerchTarget"):
+		is_blocked = _is_blocked(collider.global_position, collider)
+	elif collider.is_in_group("TightRopeTarget"):
+		is_blocked = _is_blocked(cast.get_collision_point(0), collider)
+	
+	if is_blocked:
+		return false
+	
+	return true
 
 func _get_target(cast: ShapeCast3D) -> SpireJumpTarget:
 	if not _has_target(cast):
@@ -77,11 +83,8 @@ func _get_target(cast: ShapeCast3D) -> SpireJumpTarget:
 	
 	return null
 
-func _is_blocked(target: SpireJumpTarget) -> bool:
-	if target == null:
-		return false
-	
-	blocked_raycast.target_position = target.position - global_position
+func _is_blocked(position: Vector3, node: Node3D) -> bool:
+	blocked_raycast.target_position = position - global_position
 	
 	blocked_raycast.force_raycast_update()
 	
@@ -90,4 +93,4 @@ func _is_blocked(target: SpireJumpTarget) -> bool:
 	
 	var blocking_collider = blocked_raycast.get_collider()
 	
-	return blocking_collider.get_instance_id() != target.node.get_instance_id()
+	return blocking_collider.get_instance_id() != node.get_instance_id()

@@ -284,7 +284,7 @@ collision_mask = 13
 [connection signal="timeout" from="MovementStateMachine/Airborne/CoyoteTimer" to="MovementStateMachine/Airborne" method="_on_coyote_timer_timeout"]
 [connection signal="timeout" from="MovementStateMachine/Airborne/DoubleJumpDelayTimer" to="MovementStateMachine/Airborne" method="_on_double_jump_buffer_timer_timeout"]
 [connection signal="timeout" from="MovementStateMachine/Airborne/ClimbBufferTimer" to="MovementStateMachine/Airborne" method="_on_climb_buffer_timer_timeout"]
-[connection signal="timeout" from="MovementStateMachine/Airborne/WallJumpDelayTimer" to="MovementStateMachine/Airborne" method="_on_wall_jump_delay_timer_timeout"]
 [connection signal="timeout" from="MovementStateMachine/Airborne/WallJumpDelayTimer" to="MovementStateMachine/Airborne" method="_on_coyote_timer_timeout"]
+[connection signal="timeout" from="MovementStateMachine/Airborne/WallJumpDelayTimer" to="MovementStateMachine/Airborne" method="_on_wall_jump_delay_timer_timeout"]
 [connection signal="set_camera_rotation" from="PlayerCamera3D" to="." method="_on_set_camera_rotation"]
 [connection signal="hook_engaged" from="GrapplingHook" to="MovementStateMachine/Airborne" method="_handle_hook_engaged"]

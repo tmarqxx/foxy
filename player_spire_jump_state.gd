@@ -22,7 +22,7 @@ func enter(payload: Dictionary = {}):
 	elif target.node.is_in_group("TightRopeTarget"):
 		target.node.collision_layer += 0x0001
 		var tightrope: TightRopePath3D = target.node.get_parent()
-		tightrope.set_path_progress_from_position(target.position)
+		tightrope.set_path_progress_from_position(target.position + player.get_lateral_velocity() * 0.5)
 	
 	initial_position = player.global_position
 	
@@ -51,8 +51,8 @@ func enter(payload: Dictionary = {}):
 	else:
 		player.velocity.y += jump.velocity
 	
-	player.velocity.x = 0
-	player.velocity.z = 0
+	#player.velocity.x = 0
+	#player.velocity.z = 0
 
 	current_payload = payload
 	pass
@@ -75,8 +75,6 @@ func physics_update(delta):
 			var movement_direction = player.get_movement_direction()
 			tightrope.update_path_progress(movement_direction.dot(tightrope.get_tightrope_direction()) * 7.0 * delta)
 		target_position = tightrope.get_target_position()
-		#target_position = target.position
-		
 	else:
 		target_position = target.position
 
@@ -87,7 +85,7 @@ func physics_update(delta):
 			transition_to.emit(self, "TightRopeWalkState", { "tightrope_node": target.node.get_parent() })
 		return
 	
-	var direction = (target_position - player.global_position)
+	var direction = player.global_position.direction_to(target_position)
 	
 	#if vertical_velocity > 0.0:
 		#vertical_velocity += jump.gravity * delta
@@ -109,8 +107,8 @@ func physics_update(delta):
 	#player.velocity = player.accelerate_toward(player.velocity, direction * 7.0, 1.0)
 	
 	player.velocity.y += _get_gravity() * delta
-	player.velocity.x = direction.x * (spire_jump_component.radius + 1)
-	player.velocity.z = direction.z * (spire_jump_component.radius + 1)
+	player.velocity.x = direction.x * (spire_jump_component.radius + 1) * 2.5
+	player.velocity.z = direction.z * (spire_jump_component.radius + 1) * 2.5
 
 	# player.global_position.x = move_toward(player.global_position.x, target_position.x, 7 * delta)
 	# player.global_position.z = move_toward(player.global_position.z, target_position.z, 7 * delta)
@@ -118,8 +116,8 @@ func physics_update(delta):
 	player.look_toward(direction, 20 * delta)
 	
 	#player.global_position.y = clamp(player.global_position.y, target_position.y, 1000)
-	player.global_position.x = clamp(player.global_position.x, min(player.global_position.x, initial_position.x), max(player.global_position.x, initial_position.x))
-	player.global_position.z = clamp(player.global_position.z, min(player.global_position.z, initial_position.z), max(player.global_position.z, initial_position.z))
+	player.global_position.x = clamp(player.global_position.x, min(player.global_position.x, initial_position.x), max(player.global_position.x, target_position.x))
+	player.global_position.z = clamp(player.global_position.z, min(player.global_position.z, initial_position.z), max(player.global_position.z, target_position.z))
 
 func _get_gravity() -> float:
 	if player.velocity.y > 0:

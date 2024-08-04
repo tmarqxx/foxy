@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bkskn0thwu5u3"]
+[gd_scene load_steps=6 format=3 uid="uid://bkskn0thwu5u3"]
 
 [ext_resource type="Script" path="res://scripts/SpirePerchPoint3D.gd" id="1_5wgxj"]
+[ext_resource type="Material" uid="uid://bta2fd7r6ve04" path="res://spire_perch_material.tres" id="2_v5r6n"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_u11l1"]
 
@@ -22,6 +23,7 @@ shape = SubResource("SphereShape3D_u11l1")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 mesh = SubResource("CylinderMesh_lwpra")
+surface_material_override/0 = ExtResource("2_v5r6n")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 collision_mask = 16

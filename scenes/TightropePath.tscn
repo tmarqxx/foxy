@@ -1,6 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://w0yjpb86tnt7"]
 
 [ext_resource type="Script" path="res://custom_nodes/tightrope_path_3d.gd" id="1_fp5db"]
+[ext_resource type="Material" uid="uid://cec48irnh37kq" path="res://scenes/tightrope_material.tres" id="2_ype40"]
 
 [sub_resource type="Curve3D" id="Curve3D_lcdbj"]
 _data = {
@@ -8,8 +9,6 @@ _data = {
 "tilts": PackedFloat32Array(0)
 }
 point_count = 1
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b322p"]
 
 [node name="Path3D" type="Path3D"]
 curve = SubResource("Curve3D_lcdbj")
@@ -34,10 +33,10 @@ path_interval_type = 0
 path_interval = 1.0
 path_simplify_angle = 0.0
 path_rotation = 2
-path_local = false
+path_local = true
 path_continuous_u = true
 path_u_distance = 1.0
 path_joined = false
-material = SubResource("StandardMaterial3D_b322p")
+material = ExtResource("2_ype40")
 
 [node name="TargetNode3D" type="Node3D" parent="."]

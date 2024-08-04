@@ -11,13 +11,18 @@ config_version=5
 [application]
 
 config/name="foxy"
-run/main_scene="res://scenes/levels/TestLevel.tscn"
+run/main_scene="res://TestLevel3.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
+
+[debug]
+
+shapes/collision/shape_color=Color(0.282353, 1, 0.172549, 0.419608)
+shapes/collision/contact_color=Color(0.745098, 0.2, 0.101961, 0.8)
 
 [editor_plugins]
 
@@ -127,6 +132,7 @@ shoot={
 3d_physics/layer_9="cameras"
 3d_physics/layer_13="spire_target"
 3d_physics/layer_14="tightrope_target"
+3d_physics/layer_15="grapple_swing_target"
 
 [physics]
 

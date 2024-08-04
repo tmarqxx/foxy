@@ -34,7 +34,7 @@ func _update_polygon(n: int, radius: float) -> void:
 	
 
 func _ready() -> void:
-	polygon.position = -position
+	#polygon.position = -position
 	polygon.set_polygon(points)
 
 
@@ -57,7 +57,7 @@ func _update(delta: float) -> void:
 
 func get_tightrope_direction() -> Vector3:
 	var start = curve.get_point_position(0)
-	var end = curve.get_point_position(1)
+	var end = curve.get_point_position(curve.point_count - 1)
 	
 	return start.direction_to(end)
 

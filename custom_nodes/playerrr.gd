@@ -4,6 +4,8 @@ class_name Playerrr
 #@export_category("Jump Attributes")
 #@export var basic_jump: JumpData
 
+@export_range(0.0, 100.0) var maximum_falling_speed: float = 50.0
+
 @export var mouse_sensitivity: float = 0.05
 
 @export var min_pitch: float = -89.9
@@ -16,6 +18,7 @@ class_name Playerrr
 @onready var follow_camera: PhantomCamera3D = %PlayerPhantomCamera3D
 @onready var aim_camera: PhantomCamera3D
 @onready var skin: Node3D = %PlayerSkin
+@onready var collision_shape: CollisionShape3D = $CollisionShape3D
 
 @onready var camera_follow_target: Node3D = %CameraFollowTarget
 @onready var camera_center_target: Node3D = %CameraCenterTarget
@@ -120,6 +123,8 @@ func _physics_process(delta):
 	
 	if not is_movement_enabled:
 		return
+	
+	velocity.y = clamp(velocity.y, -maximum_falling_speed, 2 * maximum_falling_speed)
 	
 	#orient_forward(delta)
 	move_and_slide()
@@ -231,6 +236,9 @@ func get_input_direction() -> Vector3:
 	direction.z = input_dir.y
 	
 	return direction.normalized()
+
+func get_lateral_velocity() -> Vector3:
+	return Vector3(velocity.x, 0, velocity.z)
 
 func get_movement_direction() -> Vector3:
 	var input_direction = get_input_direction()

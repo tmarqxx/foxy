@@ -23,6 +23,7 @@ var remote_transform: RemoteTransform3D:
 func _ready():
 	#polygon = NodeUtilities.get_child_of_type(self, DynamicCSGPolygon3D)
 	polygon.position = -position
+	polygon.rotation = -rotation
 	
 	path_follow = NodeUtilities.get_child_of_type(self, PathFollow3D)
 	remote_transform = NodeUtilities.get_child_of_type(path_follow, RemoteTransform3D)

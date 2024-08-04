@@ -18,6 +18,8 @@ func exit() -> void:
 func handle_input(event: InputEvent) -> void:
 	if event.is_action_pressed("jump"):
 		transition_to.emit(self, "WallJumpState", { "wall_normal": player.get_wall_normal() })
+	elif event.is_action_released("grapple"):
+		transition_to.emit(self, "AirborneState")
 
 func update(delta) -> void:
 	pass

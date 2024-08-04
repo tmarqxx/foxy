@@ -1,15 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://br83ft13lyk6g"]
+[gd_scene load_steps=9 format=3 uid="uid://br83ft13lyk6g"]
 
 [ext_resource type="Script" path="res://custom_nodes/BounceArea3D.gd" id="1_tu264"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_lneiu"]
 size = Vector3(0.2, 0.2, 3)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7eooo"]
+albedo_color = Color(0.1, 0.0893333, 0.02, 1)
+
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_67sdv"]
 points = PackedVector3Array(-0.112908, -0.112908, -1.51293, 0.119805, 0.119805, 1.51293, 0.119805, -0.112908, 1.51293, 0.119805, 0.119805, -1.51293, -0.112908, 0.119805, 1.51293, -0.112908, -0.112908, 1.51293, 0.119805, -0.112908, -1.51293, -0.112908, 0.119805, -1.51293)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jfa0y"]
+albedo_color = Color(0.1, 0.0893333, 0.02, 1)
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_jinqs"]
 size = Vector2(2.7, 3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t1ttt"]
+albedo_color = Color(0.68, 0.335693, 0.2584, 1)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ty1kg"]
 points = PackedVector3Array(-1.37381, -0.0238049, -1.52351, 1.3881, 0.0238049, 1.52351, 1.3881, -0.0238049, 1.52351, 1.3881, 0.0238049, -1.52351, -1.37381, 0.0238049, 1.52351, -1.37381, -0.0238049, 1.52351, 1.3881, -0.0238049, -1.52351, -1.37381, 0.0238049, -1.52351)
@@ -27,6 +36,7 @@ collision_mask = 16
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/Post1"]
 mesh = SubResource("BoxMesh_lneiu")
 skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_7eooo")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Post1"]
 shape = SubResource("ConvexPolygonShape3D_67sdv")
@@ -39,6 +49,7 @@ collision_mask = 16
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/Post2"]
 mesh = SubResource("BoxMesh_lneiu")
 skeleton = NodePath("../../Post1")
+surface_material_override/0 = SubResource("StandardMaterial3D_jfa0y")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Post2"]
 shape = SubResource("ConvexPolygonShape3D_67sdv")
@@ -51,6 +62,7 @@ bounciness = 2.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/BounceArea3D"]
 mesh = SubResource("PlaneMesh_jinqs")
+surface_material_override/0 = SubResource("StandardMaterial3D_t1ttt")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/BounceArea3D"]
 shape = SubResource("ConvexPolygonShape3D_ty1kg")

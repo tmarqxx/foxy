@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://cmh24lqvlyo45"]
+[gd_scene load_steps=40 format=3 uid="uid://cmh24lqvlyo45"]
 
 [ext_resource type="Script" path="res://custom_nodes/playerrr.gd" id="1_nkopl"]
 [ext_resource type="Script" path="res://scripts/StateMachine.gd" id="1_yk72j"]
@@ -17,16 +17,19 @@
 [ext_resource type="Script" path="res://player_spire_perch_state.gd" id="12_u635d"]
 [ext_resource type="Script" path="res://player_tight_rope_walk_state.gd" id="13_oil1q"]
 [ext_resource type="Script" path="res://custom_nodes/spire_jump_component.gd" id="13_yr6xm"]
+[ext_resource type="Script" path="res://player_grapple_swing_state.gd" id="14_m1bn3"]
+[ext_resource type="Shape3D" uid="uid://ob54rl7xpb12" path="res://PlayerCapsuleShape3D.tres" id="15_b57k6"]
+[ext_resource type="Script" path="res://custom_nodes/grapple_hook_component.gd" id="20_mcons"]
 
 [sub_resource type="Resource" id="Resource_ijr03"]
 script = ExtResource("4_ijmlj")
-max_speed = 6.0
+max_speed = 5.0
 time_to_max_speed = 0.01
 time_to_stop = 0.01
 
 [sub_resource type="Resource" id="Resource_0udyg"]
 script = ExtResource("4_ijmlj")
-max_speed = 7.0
+max_speed = 6.0
 time_to_max_speed = 0.6
 time_to_stop = 0.3
 
@@ -53,16 +56,16 @@ max_speed = 12.0
 time_to_max_speed = 1.0
 time_to_stop = 0.0
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3dkv1"]
-height = 1.0
-
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_cqbkx"]
 height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fv2aw"]
+albedo_color = Color(0.622196, 0.184308, 0.0901364, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_2pd3n"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r02bb"]
-albedo_color = Color(0.0383972, 0.0383972, 0.0383972, 1)
+albedo_color = Color(1, 0.883, 0.82, 1)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_uvipp"]
 radius = 0.25
@@ -98,6 +101,13 @@ radius = 3.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0ii6c"]
 height = 16.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_m8bxp"]
+radius = 10.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_f8uod"]
+height = 20.0
+radius = 5.0
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 16
@@ -138,9 +148,13 @@ script = ExtResource("12_u635d")
 [node name="TightRopeWalkState" type="Node" parent="MovementStateMachine"]
 script = ExtResource("13_oil1q")
 
+[node name="GrappleSwingState" type="Node" parent="MovementStateMachine"]
+script = ExtResource("14_m1bn3")
+hang_time = 0.2
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-shape = SubResource("CapsuleShape3D_3dkv1")
+shape = ExtResource("15_b57k6")
 
 [node name="PlayerSkin" type="Node3D" parent="."]
 unique_name_in_owner = true
@@ -148,9 +162,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
 [node name="Body" type="MeshInstance3D" parent="PlayerSkin"]
 mesh = SubResource("CapsuleMesh_cqbkx")
+surface_material_override/0 = SubResource("StandardMaterial3D_fv2aw")
 
 [node name="Glasses" type="MeshInstance3D" parent="PlayerSkin"]
-transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.213034, -0.306)
+transform = Transform3D(0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.5, 0, 0.213, -0.306)
 mesh = SubResource("BoxMesh_2pd3n")
 surface_material_override/0 = SubResource("StandardMaterial3D_r02bb")
 
@@ -167,7 +182,7 @@ unique_name_in_owner = true
 
 [node name="PlayerPhantomCamera3D" type="Node3D" parent="." node_paths=PackedStringArray("follow_target", "look_at_target")]
 unique_name_in_owner = true
-transform = Transform3D(-0.99999, 0, 0, 0, 0.894427, 0.447212, 0, 0.447214, -0.894423, 0, 4.23606, -4.47212)
+transform = Transform3D(0.99999, 0, 0, 0, 0.894154, 0.447757, 0, -0.447759, 0.89415, 0, 4.23879, 4.47075)
 script = ExtResource("7_d72x0")
 follow_mode = 6
 follow_target = NodePath("../CameraFollowTarget")
@@ -233,3 +248,38 @@ collide_with_areas = true
 unique_name_in_owner = true
 target_position = Vector3(0, -0.5, 0)
 collide_with_areas = true
+
+[node name="GrappleHookComponent" type="Node3D" parent="." node_paths=PackedStringArray("surrounding_swing_cast", "directional_swing_cast", "pin_joint", "swinging_body", "blocked_raycast")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+script = ExtResource("20_mcons")
+surrounding_swing_cast = NodePath("SurroundingSwingShapeCast3D")
+directional_swing_cast = NodePath("DirectionalSwingShapeCast3D")
+pin_joint = NodePath("PinJoint3D")
+swinging_body = NodePath("RigidBody3D")
+blocked_raycast = NodePath("BlockedRayCast3D")
+radius = 10.0
+
+[node name="SurroundingSwingShapeCast3D" type="ShapeCast3D" parent="GrappleHookComponent"]
+enabled = false
+shape = SubResource("SphereShape3D_m8bxp")
+target_position = Vector3(0, 0, 0)
+collision_mask = 16384
+
+[node name="DirectionalSwingShapeCast3D" type="ShapeCast3D" parent="GrappleHookComponent"]
+shape = SubResource("CylinderShape3D_f8uod")
+target_position = Vector3(0, 0, 0)
+collision_mask = 16384
+
+[node name="PinJoint3D" type="PinJoint3D" parent="GrappleHookComponent"]
+node_b = NodePath("/root/@EditorNode@17147/@Panel@13/@VBoxContainer@14/@HSplitContainer@17/@HSplitContainer@25/@HSplitContainer@33/@VBoxContainer@34/@VSplitContainer@36/@VSplitContainer@62/@VBoxContainer@63/@PanelContainer@110/MainScreen/@CanvasItemEditor@9462/@VSplitContainer@9281/@HSplitContainer@9283/@HSplitContainer@9285/@Control@9286/@SubViewportContainer@9287/@SubViewport@9288/Player/GrappleHookComponent/RigidBody3D")
+
+[node name="BlockedRayCast3D" type="RayCast3D" parent="GrappleHookComponent"]
+
+[node name="RigidBody3D" type="RigidBody3D" parent="GrappleHookComponent"]
+collision_layer = 0
+collision_mask = 3
+freeze = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GrappleHookComponent/RigidBody3D"]
+shape = ExtResource("15_b57k6")
